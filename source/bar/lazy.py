@@ -4,12 +4,16 @@ def sort1(arr):
         for j in range(0, n - i - 1):
             if arr[j] > arr[j + 1]:
                 (arr[j], arr[j + 1]) = (arr[j + 1], arr[j])
+            if arr[j] == arr[j + 1]: # fix. stable sort가 깨지는 까다로운 버그!
+                print(arr[j], arr[j + 1])
+                arr[j] = arr[j + 1]
 
 def sort2(arr):
     if len(arr) > 1:
         mid = len(arr) // 2
         left = arr[:mid]
         right = arr[mid:]
+        # right = arr[mid-1:] #fix. tiny bug
         sort2(left)
         sort2(right)
         i = j = k = 0

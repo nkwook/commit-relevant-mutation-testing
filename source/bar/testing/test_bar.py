@@ -51,6 +51,18 @@ def test_law_bar1_2():
 def test_law_bar1_3():
     assert law.bar1(1, 0, 3, 4) == 4
 
+# added test
+def test_law_bar1_4():
+    assert law.bar1(1, 1, 3, 4) == 3
+
+# added test
+def test_law_bar1_5():
+    assert law.bar1(3, 3, 3, 4) == 3
+
+# added test
+def test_law_bar1_6():
+    assert law.bar1(3, 3, 3, 4) == 3
+
 def test_law_bar2():
     assert law.bar2(2, 0, 3) == 2
 
@@ -68,3 +80,6 @@ def test_law_bar2_4():
 
 def test_law_bar2_5():
     assert law.bar2(3, 4, 2) == 7
+
+def test_law_bar2_6():
+    assert law.bar2(3, 3, 2) == 3
