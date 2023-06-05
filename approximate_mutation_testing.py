@@ -2,428 +2,21 @@ import argparse
 import json
 import os
 import subprocess
-from ast import (
-    AST,
-    Add,
-    Assign,
-    AugAssign,
-    BinOp,
-    BitAnd,
-    BitOr,
-    BitXor,
-    Compare,
-    Constant,
-    Div,
-    Eq,
-    FunctionDef,
-    Gt,
-    GtE,
-    LShift,
-    Lt,
-    LtE,
-    Mod,
-    Mult,
-    NodeTransformer,
-    NodeVisitor,
-    NotEq,
-    RShift,
-    Return,
-    Sub,
-    USub,
-    UnaryOp,
-    copy_location,
-    parse,
-    unparse,
-)
-from copy import deepcopy
+from ast import unparse
 from collections import defaultdict
-from tempfile import NamedTemporaryFile
-from typing import Any, Dict, List, Tuple
-from approximate_relevant_mutants import InitMutatorId, MutatorMarker
-from diff_processor import generate_diff, mark_ast_on_diff, parse_diff_lineno
-from pprint import pprint
+from typing import Dict, List
+
 import numpy as np
+from pprint import pprint
 
-CONDITIONALS_BOUNDARY = "CONDITIONALS-BOUNDARY"
-INCREMENTS = "INCREMENTS"
-INVERT_NEGS = "INVERT-NEGS"
-MATH = "MATH"
-NEGATE_CONDITONALS = "NEGATE-CONDITIONALS"
-FALSE_RETURNS = "FALSE-RETURNS"
-TRUE_RETURNS = "TRUE-RETURNS"
-NULL_RETURNS = "NULL-RETURNS"
-OBBN1 = "OBBN1"
-OBBN2 = "OBBN2"
-OBBN3 = "OBBN3"
-CRCR1 = "CRCR1"
-CRCR2 = "CRCR2"
-CRCR3 = "CRCR3"
-CRCR4 = "CRCR4"
-CRCR5 = "CRCR5"
-CRCR6 = "CRCR6"
+from approximate_relevant_mutants import InitMutatorId, MutantIdMarker
+from diff_processor import generate_diff, mark_ast_on_diff, parse_diff_lineno
+from mutation_testing import Mutation, generate_diffs, generate_mutation_metadata, generate_test_metadata
 
-
-mutant_records = defaultdict(list)
-# python3 pmut.py --action mutate --source examples/example4 --mutants ./mutation_diffs
-
-
-class Mutation(NodeVisitor):
-    def __init__(self, root):
-        self.root = root
-        self.root_lines = unparse(root).split("\n")
-
-    def cond_bound_handler(self, node: Compare, mutations: List[AST]) -> None:
-        for i, operator in enumerate(node.ops):
-            operator_to_mutate = None
-            if isinstance(operator, Lt):
-                operator_to_mutate = LtE()
-            elif isinstance(operator, LtE):
-                operator_to_mutate = Lt()
-            elif isinstance(operator, Gt):
-                operator_to_mutate = GtE()
-            elif isinstance(operator, GtE):
-                operator_to_mutate = Gt()
-
-            if operator_to_mutate:
-                mutated_ops = deepcopy(node.ops)
-                mutated_ops[i] = operator_to_mutate
-                mutations.append(
-                    (
-                        Compare(
-                            left=deepcopy(node.left),
-                            ops=mutated_ops,
-                            comparators=deepcopy(node.comparators),
-                        ),
-                        CONDITIONALS_BOUNDARY,
-                    )
-                )
-
-    def neg_cond_handler(self, node: Compare, mutations: List[AST]) -> None:
-        for i, operator in enumerate(node.ops):
-            operator_to_mutate = None
-            if isinstance(operator, Eq):
-                operator_to_mutate = NotEq()
-            elif isinstance(operator, NotEq):
-                operator_to_mutate = Eq()
-            elif isinstance(operator, LtE):
-                operator_to_mutate = Gt()
-            elif isinstance(operator, GtE):
-                operator_to_mutate = Lt()
-            elif isinstance(operator, Gt):
-                operator_to_mutate = LtE()
-            elif isinstance(operator, Lt):
-                operator_to_mutate = GtE()
-
-            if operator_to_mutate:
-                mutated_ops = deepcopy(node.ops)
-                mutated_ops[i] = operator_to_mutate
-                mutations.append(
-                    (
-                        Compare(
-                            left=deepcopy(node.left),
-                            ops=mutated_ops,
-                            comparators=deepcopy(node.comparators),
-                        ),
-                        NEGATE_CONDITONALS,
-                    )
-                )
-
-    def increments_handler(self, node: AugAssign, mutations: List[AST]) -> None:
-        operator_to_mutate = None
-        if isinstance(node.op, Add):
-            operator_to_mutate = Sub()
-        elif isinstance(node.op, Sub):
-            operator_to_mutate = Add()
-
-        if operator_to_mutate:
-            mutations.append(
-                (
-                    AugAssign(
-                        target=deepcopy(node.target),
-                        op=operator_to_mutate,
-                        value=deepcopy(node.value),
-                    ),
-                    INCREMENTS,
-                )
-            )
-
-    def invert_negs_handler(self, node: UnaryOp, mutations: List[AST]) -> None:
-        if isinstance(node.op, USub):
-            mutations.append((deepcopy(node.operand), INVERT_NEGS))
-
-    def math_handler(self, node: BinOp, mutations: List[AST]) -> None:
-        operator_to_mutate = None
-        if isinstance(node.op, Add):
-            operator_to_mutate = Sub()
-        elif isinstance(node.op, Sub):
-            operator_to_mutate = Add()
-        elif isinstance(node.op, Mult):
-            operator_to_mutate = Div()
-        elif isinstance(node.op, (Div, Mod)):
-            operator_to_mutate = Mult()
-        elif isinstance(node.op, BitAnd):
-            operator_to_mutate = BitOr()
-        elif isinstance(node.op, (BitOr, BitXor)):
-            operator_to_mutate = BitAnd()
-        elif isinstance(node.op, LShift):
-            operator_to_mutate = RShift()
-        elif isinstance(node.op, RShift):
-            operator_to_mutate = LShift()
-
-        if operator_to_mutate:
-            mutations.append(
-                (
-                    BinOp(
-                        left=deepcopy(node.left),
-                        op=operator_to_mutate,
-                        right=deepcopy(node.right),
-                    ),
-                    MATH,
-                )
-            )
-
-    def obbn_handler(self, node: BinOp, mutations: List[AST]):
-        operator_to_mutate = None
-        if isinstance(node.op, BitAnd):
-            operator_to_mutate = BitOr()
-        elif isinstance(node.op, (BitOr, BitXor)):
-            operator_to_mutate = BitAnd()
-
-        if operator_to_mutate:
-            mutations.extend(
-                [
-                    (
-                        BinOp(
-                            left=deepcopy(node.left),
-                            op=operator_to_mutate,
-                            right=deepcopy(node.right),
-                        ),
-                        OBBN1,
-                    ),
-                    (
-                        deepcopy(node.left),
-                        OBBN2,
-                    ),
-                    (
-                        deepcopy(node.right),
-                        OBBN3,
-                    ),
-                ]
-            )
-
-    def false_returns_handler(self, node: Return, mutations: List[AST]) -> None:
-        mutations.append((Return(value=Constant(value=False)), FALSE_RETURNS))
-
-    def true_returns_handler(self, node: Return, mutations: List[AST]) -> None:
-        mutations.append((Return(value=Constant(value=True)), TRUE_RETURNS))
-
-    def null_returns_handler(self, node: Return, mutations: List[AST]) -> None:
-        mutations.append((Return(value=Constant(value=None)), NULL_RETURNS))
-
-    def crcr_handler(self, node: Assign, mutations: List[AST]) -> None:
-        def return_assign(value: AST) -> AST:
-            return Assign(targets=deepcopy(node.targets), value=value)
-
-        node_value = node.value
-        if isinstance(node_value, Constant) and isinstance(node_value.value, (int, float)):
-            mutations.extend(
-                [
-                    (return_assign(Constant(value=1)), CRCR1),
-                    (return_assign(Constant(value=0)), CRCR2),
-                    (return_assign(Constant(value=-1)), CRCR3),
-                    (return_assign(UnaryOp(op=USub(), operand=Constant(value=node_value.value))), CRCR4),
-                    (return_assign(BinOp(op=Add(), left=Constant(value=node_value.value), right=Constant(value=1))), CRCR5),
-                    (return_assign(BinOp(op=Sub(), left=Constant(value=node_value.value), right=Constant(value=1))), CRCR6),
-                ]
-            )
-        else:
-            mutations.extend(
-                [
-                    (return_assign(Constant(value=1)), CRCR1),
-                    (return_assign(Constant(value=0)), CRCR2),
-                    (return_assign(Constant(value=-1)), CRCR3),
-                ]
-            )
-
-    def generic_visit(self, node: AST) -> None:
-        mutations: List[AST] = list()
-        if isinstance(node, Compare):
-            self.cond_bound_handler(node, mutations)
-            self.neg_cond_handler(node, mutations)
-        elif isinstance(node, AugAssign):
-            self.increments_handler(node, mutations)
-        elif isinstance(node, UnaryOp):
-            self.invert_negs_handler(node, mutations), INVERT_NEGS
-        elif isinstance(node, BinOp):
-            self.math_handler(node, mutations)
-            self.obbn_handler(node, mutations)
-        elif isinstance(node, Return):
-            self.false_returns_handler(node, mutations)
-            self.true_returns_handler(node, mutations)
-            self.null_returns_handler(node, mutations)
-        elif isinstance(node, Assign) and isinstance(node.value, Constant):
-            self.crcr_handler(node, mutations)
-
-        for mutated_node, mutation_operator in mutations:
-            generate_mutants = GenerateMutants(
-                mutated_node,
-                node.lineno,
-                node.col_offset,
-                node.end_lineno,
-                node.end_col_offset,
-            )
-            mutated_root = generate_mutants.visit(deepcopy(self.root))
-            mutated_root_str = unparse(mutated_root)
-
-            mutated_root_lines = mutated_root_str.split("\n")
-
-            if self.root_lines[node.lineno - 1] != mutated_root_lines[node.lineno - 1]:
-                mutant_records[node.lineno].append(
-                    {
-                        "mutator_id": node.mutator_id,
-                        "mutated_root": mutated_root,
-                        "mutated_code": mutated_root_lines[node.lineno - 1],
-                        "type": mutation_operator,
-                    }
-                )
-
-        super().generic_visit(node)
-
-
-class GenerateMutants(NodeTransformer):
-    def __init__(self, new_node, lineno, col_offset, end_lineno, end_col_offset):
-        self.new_node = new_node
-        self.lineno = lineno
-        self.col_offset = col_offset
-        self.end_lineno = end_lineno
-        self.end_col_offset = end_col_offset
-
-    def check_if_same_position(self, lineno, col_offset, end_lineno, end_col_offset):
-        return (
-            lineno == self.lineno
-            and col_offset == self.col_offset
-            and end_lineno == self.end_lineno
-            and end_col_offset == self.end_col_offset
-        )
-
-    def generic_visit(self, node: AST) -> None:
-        super().generic_visit(node)
-        if not hasattr(node, "lineno"):
-            return node
-        if not self.check_if_same_position(node.lineno, node.col_offset, node.end_lineno, node.end_col_offset):
-            return node
-
-        copy_location(self.new_node, node)
-        return self.new_node
-
-
-# [target_filename]_[mutation_operator]_[line_number]_[index].diff
-def generate_diffs(
-    original_path: str, target_filename: str, root: AST, mutant_records: Dict[int, List[Dict[str, Any]]]
-):
-    unparsed_root = unparse(root)
-    root_lines = unparsed_root.split("\n")
-
-    def gen_file_name(target_filename, mutation_operator, lineno):
-        str_lineno = str(lineno)
-        if lineno < 10:
-            str_lineno = f"0{lineno}"
-        i = 0
-        str_i = str(i)
-        if i < 10:
-            str_i = f"0{i}"
-        file_name = f"{target_filename}_{mutation_operator}_{str_lineno}_{str_i}.diff"
-        while os.path.exists(file_name):
-            i += 1
-            if i < 10:
-                str_i = f"0{i}"
-            file_name = f"{target_filename}_{mutation_operator}_{str_lineno}_{str_i}.diff"
-        return file_name
-
-    for lineno, mutants in mutant_records.items():
-        for mutant in sorted(mutants, key=lambda x: x["mutated_code"]):
-            # print(f"{lineno} {mutated_code}")
-            mutation_operator = mutant["type"]
-            diff_output = None
-            mutant_path = None
-            with NamedTemporaryFile(mode="w+", delete=False) as f:
-                f.write(unparse(mutant["mutated_root"]))
-                mutant_path = f.name
-
-            diff_output = os.popen(f"diff {os.path.abspath(original_path)} {mutant_path}").read()
-
-            with open(gen_file_name(target_filename, mutation_operator, lineno), "w") as f:
-                f.write(diff_output)
-
-
-def generate_mutation_metadata(
-    global_mutation_record: Dict[str, Dict[Tuple[int, int, int, int], List[Dict[str, Any]]]]
-) -> Tuple[Dict[str, List], Dict[str, List]]:
-    mutation_list = list()
-    mutation_metadata = defaultdict(list)
-
-    def gen_key(target_filename, mutation_operator, lineno):
-        str_lineno = str(lineno)
-        if lineno < 10:
-            str_lineno = f"0{lineno}"
-        i = 0
-        str_i = str(i)
-        if i < 10:
-            str_i = f"0{i}"
-        mutate_key = f"{target_filename}_{mutation_operator}_{str_lineno}_{str_i}"
-
-        while mutate_key in [x["key"] for x in mutation_list]:
-            i += 1
-            if i < 10:
-                str_i = f"0{i}"
-            mutate_key = f"{target_filename}_{mutation_operator}_{str_lineno}_{str_i}"
-        return mutate_key
-
-    for target_filename, mutant_records in global_mutation_record.items():
-        for lineno, mutants in mutant_records.items():
-            for mutant in sorted(mutants, key=lambda x: x["mutated_code"]):
-                mutation_operator = mutant["type"]
-                mutate_key = gen_key(target_filename, mutation_operator, lineno)
-                mutant["key"] = mutate_key
-                mutation_list.append(mutant)
-
-        mutation_metadata[target_filename] = sorted(
-            [x for x in mutation_list if (target_filename in x["key"])], key=lambda x: x["key"]
-        )
-    mutation_list = sorted(mutation_list, key=lambda x: x["key"])
-    mutation_index_dict = {x["key"]: i for i, x in enumerate(mutation_list)}
-    return mutation_metadata, mutation_index_dict
-
-
-# [test function name]@[pytest file name without .py]
-def generate_test_metadata(source: str) -> Any:
-    def gen_key(test_function_name, test_file_name):
-        test_file_name = test_file_name.split("/")[-1].split(".")[0]
-        return f"{test_function_name}@{test_file_name}"
-
-    test_index_key_list: List[str] = list()
-    test_index: Dict[str, int] = dict()
-    test_metadata_dict = dict()
-
-    for root, dirs, files in os.walk(source):
-        for f in files:
-            test_file = os.path.join(root, f)
-            if not ("test" in test_file and test_file.endswith(".py")):
-                continue
-            lines = open(test_file, "r").readlines()
-            # function_names = []
-            ast_root = parse("".join(lines), test_file)
-            for node in ast_root.body:
-                if not isinstance(node, FunctionDef):
-                    continue
-                test_key = gen_key(node.name, test_file)
-                test_index_key_list.append(test_key)
-
-            test_metadata_dict[f] = {"code": ast_root, "path": test_file}
-
-    test_index = {x: i for i, x in enumerate(sorted(test_index_key_list))}
-    return test_metadata_dict, test_index
-
+PARENT_COMMIT_HASH = "c5118dd"
+CHILD_COMMIT_HASH = "8fb7d5d"
+DIFF_FILE = "diff/approximate_post_commit.txt"
+SOURCE_FILE = "approximate/pre_commit.py"
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Mutation Testing Tool.")
@@ -453,33 +46,33 @@ if __name__ == "__main__":
     num_mutants = 0
     global_mutant_records = defaultdict(dict)
     mutation_index = {}
-    for f in files:
+    for f in [SOURCE_FILE]:
         mutant_records = defaultdict(list)
-        lines = open(f, "r").readlines()
+        # lines = open(f, "r").readlines()
         # root = parse("".join(lines), f)
-        generate_diff("c5118dd", "8fb7d5d")
-        added_list, removed_list = parse_diff_lineno("diff/approximate_post_commit.txt")
-    
-        pre_commit_root = mark_ast_on_diff("approximate/pre_commit.py", removed_list)
-        pre_commit_nodes_dict = {}
+        generate_diff(PARENT_COMMIT_HASH, CHILD_COMMIT_HASH)
+        added_list, removed_list = parse_diff_lineno(DIFF_FILE)
+        root = mark_ast_on_diff(SOURCE_FILE, added_list)
+        nodes_dict = {}
 
         init_mutator_id = InitMutatorId()
-        mutator_marker = MutatorMarker(pre_commit_nodes_dict)
-        init_mutator_id.visit(pre_commit_root)
-        mutator_marker.visit(pre_commit_root)
-        
-        mutation = Mutation(pre_commit_root)
-        mutation.visit(pre_commit_root)
-        pprint(mutant_records)
-        # mutation = Mutation(root)
-        # mutation.visit(root)
+
+        mutator_marker = MutantIdMarker(nodes_dict)
+
+        init_mutator_id.visit(root)
+        mutator_marker.visit(root)
+
+        mutation = Mutation(root, mutant_records, commit_aware=False, mark_mutant_id=True)
+        mutation.visit(root)
+
         target_filename = f.split("/")[-1].split(".")[0]
 
         if args.action == "mutate":
             num_mutants += sum([len(mutants) for mutants in mutant_records.values()])
-            # print(mutant_records)
+
             diff_dir = args.mutants + "/" + target_filename
-            generate_diffs(f, diff_dir, pre_commit_root, mutant_records)
+            generate_diffs(f, diff_dir, root, mutant_records)
+            # generate_diffs(f, diff_dir, pre_commit_root, mutant_records)
         elif args.action == "execute":
             global_mutant_records[target_filename] = mutant_records
 
@@ -542,7 +135,7 @@ if __name__ == "__main__":
 
                     failed_test_indicies.extend([test_index_dict[test] for test in failed_tests])
 
-                    test_num_line = [line for line in result_lines if "collected" and "items" in line]
+                    test_num_line = [line for line in result_lines if "collected" and "item" in line]
                     total_killed_mutants += len(failed_test_indicies)
                     total_tests += int(test_num_line[0].split(" ")[1])
 

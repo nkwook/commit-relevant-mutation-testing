@@ -9,21 +9,20 @@ post_commit_nodes_dict = {}
 
 class InitMutatorId(NodeVisitor):
     def visit(self, node: AST) -> AST:
-        node.mutator_id = -1
+        node.mutant_id = -1
         return super().generic_visit(node)
 
 
-class MutatorMarker(NodeVisitor):
+class MutantIdMarker(NodeVisitor):
     def __init__(self, mutator_dict: dict = {}):
-        self.mutator_id = 1
+        self.mutant_id = 1
         self.mutator_dict = mutator_dict
 
     def generic_visit(self, node: AST) -> AST:
-        if hasattr(node, "mutator_id"):
-            node.mutator_id = self.mutator_id
-            self.mutator_dict[self.mutator_id] = node
-            # print(self.mutator_id)
-            self.mutator_id += 1
+        if hasattr(node, "mutant_id"):
+            node.mutant_id = self.mutant_id
+            self.mutator_dict[self.mutant_id] = node
+            self.mutant_id += 1
         return super().generic_visit(node)
 
 
