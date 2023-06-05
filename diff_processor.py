@@ -1,17 +1,26 @@
 from ast import AST, NodeTransformer, NodeVisitor, parse, walk
+import os
 from typing import List
 from astpretty import pprint
 import subprocess
 
+
 # generated diff between two commits using git diff commit_id1 commit_id2 > diff.txt
-def generate_diff(commit_hash_1, commit_hash_2):
-    command = f"git diff {commit_hash_1} {commit_hash_2} | ./showlinenum.awk > diff.txt"
+def generate_diff(commit_hash_1, commit_hash_2, diff_dir="diff"):
+    if not os.path.exists(diff_dir):
+        os.mkdir(diff_dir)
+
+    command = f"git diff {commit_hash_1} {commit_hash_2} | ./showlinenum.awk"
     output = subprocess.run(command, shell=True, capture_output=True, text=True)
-    return output
+    diffs = [i for i in output.stdout.split("diff --git ") if len(i) > 0]
+    # print(type(diffs))
+    for diff in diffs:
+        file_name = "_".join(diff.split("\n")[0].split(" ")[-1].strip(".py").split("/")[1:]) + ".txt"
+        with open(f"{diff_dir}/{file_name}", "w") as f:
+            f.write(diff)
 
-
-def save_diff_lineno():
-    with open("diff.txt", "r") as f:
+def parse_diff_lineno(file_name):
+    with open(file_name, "r") as f:
         diff = f.readlines()
 
     # gather lineno of added/removed lines which is formed line {lineno}:+ or {lineno}:-
@@ -29,14 +38,15 @@ def save_diff_lineno():
             removed_lineno.append(curr_lineno)
     return added_lineno, removed_lineno
 
+
 # mark the variables in the AST which included in changed_lineno
-def mark_ast_on_diff(commit_aware_list: List[int]):
+def mark_ast_on_diff(file_name, commit_aware_list: List[int]):
     # read sample.py
-    code_list=[]
-    with open("sample/sample.py", "r") as f:
+    code_list = []
+    with open(file_name, "r") as f:
         code_list = f.readlines()
 
-    root=parse("".join(code_list))
+    root = parse("".join(code_list))
     # pprint(root)
     init_commit_flag = InitCommitFlag()
     init_commit_flag.visit(root)
@@ -46,10 +56,9 @@ def mark_ast_on_diff(commit_aware_list: List[int]):
     # for node in walk(root):
     #     if hasattr(node, "commit_relevant"):
     #         if node.commit_relevant:
-                # pprint(node)
-                # print(f'commit relevant: {node.lineno}')
+    # pprint(node)
+    # print(f'commit relevant: {node.lineno}')
     return root
-
 
 
 class InitCommitFlag(NodeVisitor):
@@ -61,7 +70,7 @@ class InitCommitFlag(NodeVisitor):
 class LinenoChecker(NodeVisitor):
     def __init__(self, commit_aware_list: List[int]):
         self.commit_aware_list = commit_aware_list
-        
+
     def generic_visit(self, node: AST) -> AST:
         if hasattr(node, "lineno"):
             if node.lineno in self.commit_aware_list:
@@ -69,18 +78,15 @@ class LinenoChecker(NodeVisitor):
                 node.commit_relevant = True
                 # print(node.lineno)
         return super().generic_visit(node)
-    
-    # def visit(self, node: AST) -> AST:
-        # node.lineno = -1
-        # return super().generic_visit(node)
 
+    # def visit(self, node: AST) -> AST:
+    # node.lineno = -1
+    # return super().generic_visit(node)
 
 
 if __name__ == "__main__":
-    # diff = generate_diff('7023d9642e47e643416e1f349ad7d9213c80d7f6', '3fb923593b7817390bde9ed4f7799886d0c7d5c6')
-    added_list, removed_list= save_diff_lineno()
-    mark_ast_on_diff(added_list)
-    
-
+    diff = generate_diff("aab2d03", "4c5af64")
+    # added_list, removed_list= save_diff_lineno()
+    # mark_ast_on_diff(added_list)
 
     # print(diff)

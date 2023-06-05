@@ -42,8 +42,9 @@ from tempfile import NamedTemporaryFile
 from typing import Any, Dict, List, Tuple
 
 import numpy as np
+from astpretty import pprint
 
-from diff_processor import generate_diff, mark_ast_on_diff, save_diff_lineno
+from diff_processor import generate_diff, mark_ast_on_diff, parse_diff_lineno
 from marker import Marker
 
 CONDITIONALS_BOUNDARY = "CONDITIONALS-BOUNDARY"
@@ -286,6 +287,11 @@ class Mutation(NodeVisitor):
                 mutated_root_str = unparse(mutated_root)
 
                 mutated_root_lines = mutated_root_str.split("\n")
+                # print(mutated_root_lines)
+                # print(node.lineno)
+                # print(len(self.root_lines), len(mutated_root_lines))
+                # if node.lineno > len(self.root_lines) or node.lineno > len(mutated_root_lines):
+                #     continue
                 if self.root_lines[node.lineno - 1] != mutated_root_lines[node.lineno - 1]:
                     mutant_records[node.lineno].append(
                         {
@@ -440,6 +446,9 @@ if __name__ == "__main__":
     parser.add_argument("-m", "--mutants", type=str, required=False)
     parser.add_argument("-c", "--commit_aware", action="store_true", required=False)
     parser.add_argument("-k", "--kill", type=str)
+    parser.add_argument("-d", "--diff", type=str, default="diff")
+    parser.add_argument("-parent", "--parent", type=str, required=False)
+    parser.add_argument("-child", "--child", type=str, required=False)
 
     args = parser.parse_args()
     # python pmut.py --action execute --source target/bar --kill ./kills
@@ -462,24 +471,24 @@ if __name__ == "__main__":
     num_mutants = 0
     global_mutant_records = defaultdict(dict)
     mutation_index = {}
+    if args.commit_aware:
+        generate_diff(args.parent, args.child, args.diff)
+
     for f in files:
         mutant_records = defaultdict(list)
         lines = open(f, "r").readlines()
         root = parse("".join(lines), f)
-        generate_diff("9919cf5", "7f454a5")
-
-        added_list, removed_list = save_diff_lineno()
-        print(added_list)
-        marked_root = mark_ast_on_diff(added_list)
-
-        print(args.commit_aware, type(args.commit_aware))
 
         if args.commit_aware:
+            # print(f)
+            diff_file_name = args.diff + "/" + "_".join(f.strip(".py").split("/")) + ".txt"
+            added_list, removed_list = parse_diff_lineno(diff_file_name)
+            # print(diff_file_name, added_list, removed_list)
+            marked_root = mark_ast_on_diff(f, added_list)
             marker = Marker(marked_root)
             marker.execute()
             marked_root = marker.tree
 
-        if args.commit_aware:
             mutation = Mutation(marked_root, True)
             mutation.visit(marked_root)
         else:
@@ -489,6 +498,7 @@ if __name__ == "__main__":
 
         if args.action == "mutate":
             num_mutants += sum([len(mutants) for mutants in mutant_records.values()])
+            print(num_mutants)
             diff_dir = args.mutants + "/" + target_filename
             generate_diffs(f, diff_dir, root, mutant_records)
         elif args.action == "execute":
