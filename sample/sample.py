@@ -1,8 +1,9 @@
 def two_sum(a, b):
     c=a
+    d=40
     a=b
     b=c
-    return a + b
+    return b + a
 
 if __name__ == '__main__':
-    two_sum(2, 3)
+    two_sum(4, 2)
