@@ -33,22 +33,22 @@ def save_diff_lineno():
 def mark_ast_on_diff(commit_aware_list: List[int]):
     # read sample.py
     code_list=[]
-    with open("sample.py", "r") as f:
+    with open("sample/sample.py", "r") as f:
         code_list = f.readlines()
 
     root=parse("".join(code_list))
-    pprint(root)
+    # pprint(root)
     init_commit_flag = InitCommitFlag()
     init_commit_flag.visit(root)
     lineno_checker = LinenoChecker(commit_aware_list)
     lineno_checker.visit(root)
 
-    for node in walk(root):
-        if hasattr(node, "commit_relevant"):
-            if node.commit_relevant:
-                pprint(node)
-                print(f'commit relevant: {node.lineno}')
-
+    # for node in walk(root):
+    #     if hasattr(node, "commit_relevant"):
+    #         if node.commit_relevant:
+                # pprint(node)
+                # print(f'commit relevant: {node.lineno}')
+    return root
 
 
 
@@ -67,7 +67,7 @@ class LinenoChecker(NodeVisitor):
             if node.lineno in self.commit_aware_list:
                 # mark the node as commit relevant
                 node.commit_relevant = True
-                print(node.lineno)
+                # print(node.lineno)
         return super().generic_visit(node)
     
     # def visit(self, node: AST) -> AST:
