@@ -2,7 +2,7 @@ def two_sum(a, b):
     c = a
     d = 4
     a = b
-    c +=1
+    c += 1
     b = c
     return b + a
 
