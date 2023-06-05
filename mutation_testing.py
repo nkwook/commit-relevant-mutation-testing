@@ -34,6 +34,7 @@ from ast import (
     copy_location,
     parse,
     unparse,
+    walk
 )
 from copy import deepcopy
 from collections import defaultdict
@@ -43,7 +44,7 @@ from typing import Any, Dict, List, Tuple
 import numpy as np
 
 from diff_processor import generate_diff, mark_ast_on_diff, save_diff_lineno
-
+from marker import Marker
 
 CONDITIONALS_BOUNDARY = "CONDITIONALS-BOUNDARY"
 INCREMENTS = "INCREMENTS"
@@ -472,6 +473,12 @@ if __name__ == "__main__":
         marked_root = mark_ast_on_diff(added_list)
 
         print(args.commit_aware, type(args.commit_aware))
+
+        if args.commit_aware:
+            marker = Marker(marked_root)
+            marker.execute()
+            marked_root = marker.tree
+
         if args.commit_aware:
             mutation = Mutation(marked_root, True)
             mutation.visit(marked_root)
