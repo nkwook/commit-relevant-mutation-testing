@@ -46,6 +46,11 @@ def test_math_foo1_3():
 def test_math_foo1_4():
     assert math.foo1(2, 1, 4, 5) == 13
 
+# added
+def test_math_foo1_5():
+    assert math.foo1(5, 1, 4, 5) == 4
+
+
 def test_math_foo2():
     assert math.foo2(True, True, False)
 
