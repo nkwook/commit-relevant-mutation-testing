@@ -25,13 +25,13 @@ def find_relevant_import(root: ast.Module):
 
     for node in ast.walk(root):
         # from @@@ import ###
-        if(isinstance(node, ast.ImportFrom)):
+        if(isinstance(node, ast.ImportFrom) and node.commit_relevant):
             for iter in node.names:
                 from_imports.append({'path': '/'.join(node.module.split('.')), 'name': iter.name})
 
         # function call 
         # todo: class method call
-        if(isinstance(node, ast.Call)):
+        if(isinstance(node, ast.Call) and node.commit_relevant):
             if(isinstance(node.func, ast.Attribute)):
                 function_name = node.func.attr
                 path = node.func.value.id + '.py'
@@ -59,5 +59,6 @@ def find_relevant_import(root: ast.Module):
                 path_map[path] = []
             path_map[path].append(node['name'])
         
+    # print('done')
     for file in path_map:
         import_mutate.import_mutate(file, path_map[file])

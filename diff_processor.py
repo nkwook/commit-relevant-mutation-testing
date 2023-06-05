@@ -3,6 +3,7 @@ import os
 from typing import List
 from astpretty import pprint
 import subprocess
+from import_processor import find_relevant_import
 
 
 # generated diff between two commits using git diff commit_id1 commit_id2 > diff.txt
