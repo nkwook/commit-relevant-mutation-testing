@@ -30,7 +30,7 @@ def save_diff_lineno():
     return added_lineno, removed_lineno
 
 # mark the variables in the AST which included in changed_lineno
-def mark_ast_on_diff(changed_lineno):
+def mark_ast_on_diff(commit_aware_list: List[int]):
     # read sample.py
     code_list=[]
     with open("sample.py", "r") as f:
@@ -40,7 +40,7 @@ def mark_ast_on_diff(changed_lineno):
     pprint(root)
     init_commit_flag = InitCommitFlag()
     init_commit_flag.visit(root)
-    lineno_checker = LinenoChecker(added_list)
+    lineno_checker = LinenoChecker(commit_aware_list)
     lineno_checker.visit(root)
 
     for node in walk(root):
