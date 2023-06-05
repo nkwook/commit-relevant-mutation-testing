@@ -1,6 +1,6 @@
 def two_sum(a, b):
     c = a
-    d = 4
+    d = 40
     a = b
     c += 1
     b = c
