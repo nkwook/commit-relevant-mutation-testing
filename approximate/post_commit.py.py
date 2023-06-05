@@ -6,8 +6,16 @@ def func(x: List[int], y: List[int]) -> int:
     R = 2
     if x[R] > y[R]:
         vR = 1
-    
+    elif x[R] == y[R]:
+        L = 1
+        if x[L] > y[L]:
+            vL = 1
+
     if x[0] > y[2]:
         return -1
+    
+    a=1
+    b=2
+    c=3
 
     return vL + vR
