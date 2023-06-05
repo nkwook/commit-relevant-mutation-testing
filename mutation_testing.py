@@ -479,9 +479,6 @@ if __name__ == "__main__":
         lines = open(f, "r").readlines()
         root = parse("".join(lines), f)
 
-
-        if args.commit_aware:
-
         if args.commit_aware:
             # print(f)
             diff_file_name = args.diff + "/" + "_".join(f.strip(".py").split("/")) + ".txt"
