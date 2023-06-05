@@ -1,0 +1,15 @@
+4,5c4,5
+<     L, R, vL, vR = 0, 0, 0, 0
+<     x, y = sorted(x), sorted(y)
+---
+>     (L, R, vL, vR) = (0, 0, 0, 0)
+>     (x, y) = (sorted(x), sorted(y))
+10c10
+<         L = 0
+---
+>         L = -0
+15c15
+<     return vL + vR
+---
+>     return vL + vR
+\ No newline at end of file
