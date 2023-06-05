@@ -6,6 +6,5 @@ def two_sum(a, b):
     b = c
     return b + a
 
-
 if __name__ == "__main__":
     two_sum(2, 6)
