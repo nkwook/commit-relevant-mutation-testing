@@ -34,6 +34,7 @@ from ast import (
     copy_location,
     parse,
     unparse,
+    walk
 )
 from copy import deepcopy
 from collections import defaultdict
@@ -44,7 +45,7 @@ import numpy as np
 from astpretty import pprint
 
 from diff_processor import generate_diff, mark_ast_on_diff, parse_diff_lineno
-
+from marker import Marker
 
 CONDITIONALS_BOUNDARY = "CONDITIONALS-BOUNDARY"
 INCREMENTS = "INCREMENTS"
@@ -478,12 +479,18 @@ if __name__ == "__main__":
         lines = open(f, "r").readlines()
         root = parse("".join(lines), f)
 
+
+        if args.commit_aware:
+
         if args.commit_aware:
             # print(f)
             diff_file_name = args.diff + "/" + "_".join(f.strip(".py").split("/")) + ".txt"
             added_list, removed_list = parse_diff_lineno(diff_file_name)
             # print(diff_file_name, added_list, removed_list)
             marked_root = mark_ast_on_diff(f, added_list)
+            marker = Marker(marked_root)
+            marker.execute()
+            marked_root = marker.tree
 
             mutation = Mutation(marked_root, True)
             mutation.visit(marked_root)
