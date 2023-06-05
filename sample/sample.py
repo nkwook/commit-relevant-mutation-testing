@@ -1,10 +1,10 @@
 def two_sum(a, b):
     c = a
-    d = 40
+    c = 2
     a = b
-    c += 1
+    c += 10
     b = c
     return b + a
 
 if __name__ == "__main__":
-    two_sum(2, 6)
+    two_sum(2, 8)
