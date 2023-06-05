@@ -13,5 +13,3 @@ def func(x: List[int], y: List[int]) -> int:
 
     if x[0] > y[2]:
         return -1
-
-
