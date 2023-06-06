@@ -6,7 +6,7 @@ curr_dir = os.getcwd()
 parent_dir = os.path.dirname(os.path.dirname(curr_dir))
 sys.path.insert(1, parent_dir)
 
-from bar.lazy import *
+from case6 import sort1, sort2, sort3
 
 def test_sort1():
     randnums= [37, 49, 46, 50, 89, 1, 4, 2, 39, 22, 101, 23, 342, 32, 11]
