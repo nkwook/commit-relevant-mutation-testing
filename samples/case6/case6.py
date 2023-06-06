@@ -4,9 +4,6 @@ def sort1(arr):
         for j in range(0, n - i - 1):
             if arr[j] > arr[j + 1]:
                 (arr[j], arr[j + 1]) = (arr[j + 1], arr[j])
-            if arr[j] == arr[j + 1]: # fix. stable sort가 깨지는 까다로운 버그!
-                print(arr[j], arr[j + 1])
-                arr[j] = arr[j + 1]
 
 def sort2(arr):
     if len(arr) > 1:
@@ -25,13 +22,13 @@ def sort2(arr):
                 arr[k] = right[j]
                 j += 1
             k += 1
-        while i < len(left):
-            arr[k] = left[i]
-            i += 1
-            k += 1
         while j < len(right):
             arr[k] = right[j]
             j += 1
+            k += 1
+        while i < len(left):
+            arr[k] = left[i]
+            i += 1
             k += 1
 
 def get_pivot(arr, low, high):
