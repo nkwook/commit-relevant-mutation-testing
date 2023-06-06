@@ -7,11 +7,9 @@ def func(x: List[int], y: List[int]) -> int:
     if x[R] > y[R]:
         vR = 1
     elif x[R] == y[R]:
-        L = 1
+        L = 0
         if x[L] > y[L]:
             vL = 1
-
     if x[0] > y[2]:
         return -1
-
     return vL + vR
