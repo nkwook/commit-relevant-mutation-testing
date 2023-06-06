@@ -23,3 +23,9 @@ def test4():
 
 def test5():
     assert int(case2.equation_fibonacci(50)) == 12586269025
+
+def test6():
+    assert int(case2.equation_fibonacci(2)) == 2
+
+def test7():
+    assert int(case2.equation_fibonacci(4)) == 5
