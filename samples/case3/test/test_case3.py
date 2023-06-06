@@ -22,3 +22,6 @@ def test4():
 
 def test5():
     assert case3.gcdExtended(0, 100) == (100, 0, 1)
+
+def test6():
+    assert case3.gcdExtended(2, 1) == (1, 0, 1)
