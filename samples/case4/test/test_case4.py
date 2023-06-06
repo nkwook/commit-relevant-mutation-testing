@@ -4,6 +4,7 @@ import os
 curr_dir = os.getcwd()
 parent_dir = os.path.dirname(os.path.dirname(curr_dir))
 sys.path.insert(1, parent_dir)
+sys.path.insert(1, curr_dir)
 
 from case4 import case4
 
