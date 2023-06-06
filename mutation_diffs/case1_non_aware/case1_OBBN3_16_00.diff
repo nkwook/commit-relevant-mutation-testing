@@ -1,0 +1,14 @@
+8c8
+<     elif a > b and c > d :
+---
+>     elif a > b and c > d:
+16c16
+<     if (a == c) & (b != c):
+---
+>     if b != c:
+20,21c20
+<     return a + b
+< 
+---
+>     return a + b
+\ No newline at end of file

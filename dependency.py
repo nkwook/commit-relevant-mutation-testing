@@ -80,7 +80,7 @@ class DependencyVisitor(ast.NodeVisitor):
                 if isinstance(target, ast.Name):
                     self.add_assignment(target, node.value)
 
-                elif isinstance(target, ast.Tuple):
+                elif isinstance(target, ast.Tuple) and not isinstance(node.value, ast.Call):
                     for t_elt, v_elt in zip(target.elts, node.value.elts):
                         if isinstance(t_elt, ast.Name):
                             self.add_assignment(t_elt, v_elt)

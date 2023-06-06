@@ -1,0 +1,4 @@
+4c4
+<     (gcd, x1, y1) = gcdExtended(b * a, a)
+---
+>     (gcd, x1, y1) = gcdExtended(b / a, a)

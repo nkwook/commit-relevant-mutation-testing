@@ -1,0 +1,18 @@
+4,5c4,5
+<     elif(b > 10):#
+<         return 100
+---
+>     elif b > 10:
+>         return None
+10c10
+<     if(a > 10):#
+---
+>     if a > 10:
+21c21
+<     if(a == b):#
+---
+>     if a == b:
+36c36
+< def foo5(a):#
+---
+> def foo5(a):
