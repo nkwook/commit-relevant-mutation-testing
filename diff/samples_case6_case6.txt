@@ -1,0 +1,42 @@
+a/samples/case6/case6.py b/samples/case6/case6.py
+index b38c533..68dc5ce 100644
+--- a/samples/case6/case6.py
++++ b/samples/case6/case6.py
+@@ -4,9 +4,6 @@ def sort1(arr):
+4:         for j in range(0, n - i - 1):
+5:             if arr[j] > arr[j + 1]:
+6:                 (arr[j], arr[j + 1]) = (arr[j + 1], arr[j])
+ :-            if arr[j] == arr[j + 1]: # fix. stable sort가 깨지는 까다로운 버그!
+ :-                print(arr[j], arr[j + 1])
+ :-                arr[j] = arr[j + 1]
+7: 
+8: def sort2(arr):
+9:     if len(arr) > 1:
+@@ -16,7 +13,7 @@ def sort2(arr):
+13:         # right = arr[mid-1:] #fix. tiny bug
+14:         sort2(left)
+15:         sort2(right)
+  :-        i = j = k = 0
+16:+        i = j = k = j = 0
+17:         while i < len(left) and j < len(right):
+18:             if left[i] < right[j]:
+19:                 arr[k] = left[i]
+@@ -25,14 +22,14 @@ def sort2(arr):
+22:                 arr[k] = right[j]
+23:                 j += 1
+24:             k += 1
+  :-        while i < len(left):
+  :-            arr[k] = left[i]
+  :-            i += 1
+  :-            k += 1
+25:         while j < len(right):
+26:             arr[k] = right[j]
+27:             j += 1
+28:             k += 1
+29:+        while i < len(left):
+30:+            arr[k] = left[i]
+31:+            i += 1
+32:+            k += 1
+33: 
+34: def get_pivot(arr, low, high):
+35:     i = low - 1

@@ -1,0 +1,13 @@
+a/samples/case10/case10.py b/samples/case10/case10.py
+index b3debd5..50d8ba5 100644
+--- a/samples/case10/case10.py
++++ b/samples/case10/case10.py
+@@ -7,7 +7,7 @@ def func(x: List[int], y: List[int]) -> int:
+7:     if x[R] > y[R]:
+8:         vR = 1
+9:     elif x[R] == y[R]:
+  :-        L = 0
+10:+        L = 1
+11:         if x[L] > y[L]:
+12:             vL = 1
+13:     if x[0] > y[2]:

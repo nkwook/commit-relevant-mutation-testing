@@ -1,0 +1,14 @@
+3c3
+<     for i in range(n - 1):
+---
+>     for i in range(n + 1):
+6a7
+> 
+12d12
+<         # right = arr[mid-1:] #fix. tiny bug
+31a32
+> 
+40a42
+> 
+47a50
+> 

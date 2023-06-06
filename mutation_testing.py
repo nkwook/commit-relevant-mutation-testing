@@ -487,6 +487,7 @@ if __name__ == "__main__":
         generate_diff(args.parent, args.child, args.diff)
 
     for f in files:
+        print(f)
         mutant_records = defaultdict(list)
         lines = open(f, "r").readlines()
         root = parse("".join(lines), f)
@@ -507,6 +508,8 @@ if __name__ == "__main__":
             mutation = Mutation(root, mutant_records, False)
             mutation.visit(root)
         target_filename = f.split("/")[-1].split(".")[0]
+
+
 
         if args.action == "mutate":
             num_mutants += sum([len(mutants) for mutants in mutant_records.values()])

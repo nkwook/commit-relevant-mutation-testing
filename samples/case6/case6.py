@@ -4,10 +4,6 @@ def sort1(arr):
         for j in range(0, n - i - 1):
             if arr[j] > arr[j + 1]:
                 (arr[j], arr[j + 1]) = (arr[j + 1], arr[j])
-            if arr[j] == arr[j + 1]: # fix. stable sort가 깨지는 까다로운 버그!
-                print(arr[j], arr[j + 1])
-                arr[j] = arr[j + 1]
-
 def sort2(arr):
     if len(arr) > 1:
         mid = len(arr) // 2
@@ -16,7 +12,7 @@ def sort2(arr):
         # right = arr[mid-1:] #fix. tiny bug
         sort2(left)
         sort2(right)
-        i = j = k = 0
+        i = j = k = j = 0
         while i < len(left) and j < len(right):
             if left[i] < right[j]:
                 arr[k] = left[i]
@@ -25,15 +21,14 @@ def sort2(arr):
                 arr[k] = right[j]
                 j += 1
             k += 1
-        while i < len(left):
-            arr[k] = left[i]
-            i += 1
-            k += 1
         while j < len(right):
             arr[k] = right[j]
             j += 1
             k += 1
-
+        while i < len(left):
+            arr[k] = left[i]
+            i += 1
+            k += 1
 def get_pivot(arr, low, high):
     i = low - 1
     pivot = arr[high]
@@ -43,7 +38,6 @@ def get_pivot(arr, low, high):
             (arr[i], arr[j]) = (arr[j], arr[i])
     (arr[i + 1], arr[high]) = (arr[high], arr[i + 1])
     return i + 1
-
 def help_sort3(arr, low, high):
     if len(arr) == 1:
         return arr
@@ -51,6 +45,5 @@ def help_sort3(arr, low, high):
         pivot = get_pivot(arr, low, high)
         help_sort3(arr, low, pivot - 1)
         help_sort3(arr, pivot + 1, high)
-
 def sort3(arr):
     return help_sort3(arr, 0, len(arr) - 1)

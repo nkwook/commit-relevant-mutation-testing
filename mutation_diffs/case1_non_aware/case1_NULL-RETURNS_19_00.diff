@@ -1,0 +1,12 @@
+8c8
+<     elif a > b and c > d :
+---
+>     elif a > b and c > d:
+19,21c19,20
+<         return c
+<     return a + b
+< 
+---
+>         return None
+>     return a + b
+\ No newline at end of file

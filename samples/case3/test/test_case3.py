@@ -15,10 +15,10 @@ def test2():
     assert case3.gcdExtended(52839, 3) == (3, 0, 1)
 
 def test3():
-    assert case3.gcdExtended(273864786232, 44) == (4, 1, -6224199687)
+    assert case3.gcdExtended(123, 44) == (4, 1, -123)
 
 def test4():
-    assert case3.gcdExtended(7313570656, 2344) == (2344, 0, 1)
+    assert case3.gcdExtended(23423, 2344) == (2344, 0, 1)
 
 def test5():
     assert case3.gcdExtended(0, 100) == (100, 0, 1)
