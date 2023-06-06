@@ -13,7 +13,7 @@ def sort2(arr):
         # right = arr[mid-1:] #fix. tiny bug
         sort2(left)
         sort2(right)
-        i = j = k = 0
+        i = j = k = j = 0
         while i < len(left) and j < len(right):
             if left[i] < right[j]:
                 arr[k] = left[i]
