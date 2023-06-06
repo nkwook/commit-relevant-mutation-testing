@@ -20,4 +20,9 @@ def test3():
 def test4():
     assert case4.two_sum(-4123, -411) == -399
 
+def test5():
+    assert case4.two_sum(0, 10) == 22
+
+def test6():
+    assert case4.two_sum(-1, -10) == 2
 
