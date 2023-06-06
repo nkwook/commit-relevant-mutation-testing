@@ -1,7 +1,7 @@
 def for_loop(x):
     a=0
     for i in range(x):
-       a+=1
+       a-=1
        b=0
     return (a,b)
 
