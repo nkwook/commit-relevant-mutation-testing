@@ -1,6 +1,6 @@
 from ast import AST, NodeTransformer, NodeVisitor, parse, walk
 import os
-from typing import List
+from typing import List, Tuple
 from astpretty import pprint
 import subprocess
 from import_processor import find_relevant_import
@@ -20,7 +20,8 @@ def generate_diff(commit_hash_1, commit_hash_2, diff_dir="diff"):
         with open(f"{diff_dir}/{file_name}", "w") as f:
             f.write(diff)
 
-def parse_diff_lineno(file_name):
+
+def parse_diff_lineno(file_name: str) -> Tuple[List[int], List[int]]:
     with open(file_name, "r") as f:
         diff = f.readlines()
 
@@ -28,15 +29,22 @@ def parse_diff_lineno(file_name):
     added_lineno = []
     removed_lineno = []
     curr_lineno = -1
+    minus_streak = 0
     for line in diff:
-        if len(line.split(":")) <= 1:
+        if len(line.split(":")) <= 1 or "@@" in line:
             continue
         if len(line.split(":")[0].strip()) > 0:
             curr_lineno = int(line.split(":")[0])
-        if line.split(":")[1][0] == "+":
-            added_lineno.append(curr_lineno)
-        elif line.split(":")[1][0] == "-":
-            removed_lineno.append(curr_lineno)
+
+        if line.split(":")[1][0] == "-":
+            minus_streak += 1
+            removed_lineno.append(curr_lineno + minus_streak)
+        else:
+            if minus_streak > 0:
+                minus_streak = 0
+            if line.split(":")[1][0] == "+":
+                added_lineno.append(curr_lineno)
+
     return added_lineno, removed_lineno
 
 

@@ -66,15 +66,16 @@ CRCR5 = "CRCR5"
 CRCR6 = "CRCR6"
 
 
-mutant_records = defaultdict(list)
 # python3 pmut.py --action mutate --source examples/example4 --mutants ./mutation_diffs
 
 
 class Mutation(NodeVisitor):
-    def __init__(self, root, commit_aware):
+    def __init__(self, root, mutant_records, commit_aware=False, mark_mutant_id=False):
         self.root = root
+        self.mutant_records = mutant_records
         self.root_lines = unparse(root).split("\n")
         self.commit_aware = commit_aware
+        self.mark_mutant_id = mark_mutant_id
 
     def cond_bound_handler(self, node: Compare, mutations: List[AST]) -> None:
         for i, operator in enumerate(node.ops):
@@ -293,13 +294,24 @@ class Mutation(NodeVisitor):
                 # if node.lineno > len(self.root_lines) or node.lineno > len(mutated_root_lines):
                 #     continue
                 if self.root_lines[node.lineno - 1] != mutated_root_lines[node.lineno - 1]:
-                    mutant_records[node.lineno].append(
-                        {
-                            "mutated_root": mutated_root,
-                            "mutated_code": mutated_root_lines[node.lineno - 1],
-                            "type": mutation_operator,
-                        }
-                    )
+                    if self.mark_mutant_id:
+                        self.mutant_records[node.lineno].append(
+                            {
+                                "mutant_id": node.mutant_id,
+                                "mutated_root": mutated_root,
+                                "mutated_code": mutated_root_lines[node.lineno - 1],
+                                "type": mutation_operator,
+                            }
+                        )
+
+                    else:
+                        self.mutant_records[node.lineno].append(
+                            {
+                                "mutated_root": mutated_root,
+                                "mutated_code": mutated_root_lines[node.lineno - 1],
+                                "type": mutation_operator,
+                            }
+                        )
 
         super().generic_visit(node)
 
@@ -489,10 +501,10 @@ if __name__ == "__main__":
             marker.execute()
             marked_root = marker.tree
 
-            mutation = Mutation(marked_root, True)
+            mutation = Mutation(marked_root, mutant_records, True)
             mutation.visit(marked_root)
         else:
-            mutation = Mutation(root, False)
+            mutation = Mutation(root, mutant_records, False)
             mutation.visit(root)
         target_filename = f.split("/")[-1].split(".")[0]
 
