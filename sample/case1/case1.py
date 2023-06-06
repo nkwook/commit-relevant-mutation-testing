@@ -1,5 +1,5 @@
 def bar1(a, b, c, d):
-    if a <= b and c > d:
+    if a < b and c > d:
         return a
     elif a > b and c == d:
         return b
@@ -15,4 +15,4 @@ def bar2(a, b, c):
         return b
     if (a < b) & (b < c) | (a == c):
         return c
-    return a + b
+    return a - b
