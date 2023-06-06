@@ -5,6 +5,8 @@ def bar1(a, b, c, d):
         return b
     elif a == b or c == d:
         return c
+    elif a > b and c > d :
+        return a
     else:
         return d
 
