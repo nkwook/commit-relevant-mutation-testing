@@ -15,4 +15,4 @@ def bar2(a, b, c):
         return b
     if (a < b) & (b < c) | (a == c):
         return c
-    return a - b
+    return a + b

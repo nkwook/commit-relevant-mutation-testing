@@ -4,7 +4,7 @@ def gcdExtended(a, b):
              
     gcd,x1,y1 = gcdExtended(b%a, a)
      
-    x = y1 - (b//a) + x1
+    x = y1 - (b//a) * x1
     y = x1
      
     return gcd,x,y
