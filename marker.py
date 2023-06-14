@@ -2,13 +2,15 @@ import ast
 import sys
 import os
 
-from dependency import get_dependencies
+from dependency.data_dependency import get_dd
+from dependency.control_dependency import get_cd
 from utils import compare_ast, relevant
 
 class Marker():
     def __init__(self, tree):
         self.tree = tree
-        self.deps = get_dependencies(tree)
+        self.data_deps = get_dd(tree)
+        self.cond_deps = get_cd(tree)
         self.marked_nodes = []
 
     def retrieve_marked_nodes(self):
@@ -29,7 +31,7 @@ class Marker():
         visitor.visit(self.tree)
         self.marked_nodes = visitor.marked_nodes
     
-    def mark_function(self, node):
+    def mark_dd_function(self, node):
 
         marked_nodes_in_f = []
         for x in node.body:
@@ -40,7 +42,7 @@ class Marker():
     
         marked_vars = set()
         for marked_node in marked_nodes_in_f:
-            for varname in self.deps[node.name]:
+            for varname in self.data_deps[node.name]:
                 if relevant(marked_node, varname):
                     marked_vars.add(varname)
 
@@ -66,15 +68,15 @@ class Marker():
 
         return visitor.to_mark_nodes
 
-    def mark(self):
+    def mark_dd(self):
         to_mark_nodes = []
 
         for node in ast.iter_child_nodes(self.tree):
             if isinstance(node, ast.FunctionDef):
-                to_mark_nodes += self.mark_function(node)
+                to_mark_nodes += self.mark_dd_function(node)
             #TODO: handle main
             '''else:
-                for varname in self.deps["main"]:
+                for varname in self.data_deps["main"]:
                     if relevant(node, varname):
                         to_mark_nodes.append(node)
                         break'''
@@ -90,6 +92,32 @@ class Marker():
         visitor = MarkerVisitor()
         visitor.visit(self.tree)
 
+    def mark_cd(self):
+        pass
+
     def execute(self):
         self.retrieve_marked_nodes()
-        self.mark()
+        self.mark_dd()
+        self.mark_cd()
+
+# TODO: Move to tests
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: python marker.py <file>")
+        sys.exit(1)
+
+    filename = sys.argv[1]
+    if not os.path.isfile(filename):
+        print("File not found!")
+        sys.exit(1)
+
+    with open(filename, "r") as f:
+        tree = ast.parse(f.read())
+
+    marker = Marker(tree)
+    marker.execute()
+
+    print(ast.dump(tree))
+
+if __name__ == "__main__":
+    main()

@@ -1,32 +1,9 @@
 import ast
-import sys
-import os
-
 from copy import deepcopy
-from utils import compare_ast
 
-class Separator(ast.NodeVisitor):
-    def __init__(self):
-        self.functions = []
-        self.rest = []
+from .common import Separator, Remover
 
-    def generic_visit(self, node):
-        super().generic_visit(node)
-
-        if isinstance(node, ast.FunctionDef):
-            self.functions.append(node)
-
-class Remover(ast.NodeTransformer):
-    def __init__(self, functions):
-        self.functions = functions
-    
-    def visit_FunctionDef(self, node):
-        for function in self.functions:
-            if compare_ast(node, function):
-                return None
-        return node
-
-class DependencyVisitor(ast.NodeVisitor):
+class DDVisitor(ast.NodeVisitor):
     def __init__(self):
         self.deps = {}
 
@@ -87,7 +64,7 @@ class DependencyVisitor(ast.NodeVisitor):
 
         ast.NodeVisitor.generic_visit(self, node)
 
-def get_dependencies(code):
+def get_dd(code):
 
     res = {}
 
@@ -101,7 +78,7 @@ def get_dependencies(code):
     remover.visit(rest_tree)
 
     for x in separator.functions + [rest_tree]:
-        dep_visitor = DependencyVisitor()
+        dep_visitor = DDVisitor()
         dep_visitor.visit(x)
 
         if isinstance(x, ast.FunctionDef):
@@ -111,7 +88,8 @@ def get_dependencies(code):
 
     return res
 
-def main():
+# TODO: Move to tests
+'''def main():
     
     if len(sys.argv) < 2:   
         print("Usage: python dependency.py <input_file>")
@@ -130,4 +108,4 @@ def main():
     print(res)
 
 if __name__ == "__main__":
-    main()
+    main()'''
