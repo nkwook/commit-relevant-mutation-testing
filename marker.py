@@ -92,8 +92,45 @@ class Marker():
         visitor = MarkerVisitor()
         visitor.visit(self.tree)
 
+    def mark_cd_function(self, node):
+
+        marked_nodes_in_f = []
+        for x in node.body:
+            for y in self.marked_nodes:
+                if compare_ast(x, y):
+                    marked_nodes_in_f.append(x)
+                    break
+    
+        marked_vars = set()
+        for marked_node in marked_nodes_in_f:
+            for varname in self.data_deps[node.name]:
+                if relevant(marked_node, varname):
+                    marked_vars.add(varname)
+
+        to_mark_nodes = []
+        for marked_var in marked_vars:
+            to_mark_nodes += self.cond_deps[marked_var]
+
+        return to_mark_nodes
+
     def mark_cd(self):
-        pass
+        to_mark_nodes = []
+
+        for node in ast.iter_child_nodes(self.tree):
+            if isinstance(node, ast.FunctionDef):
+                to_mark_nodes += self.mark_cd_function(node)
+            #TODO: handle main
+
+        class MarkerVisitor(ast.NodeVisitor):
+            def generic_visit(self, node):
+                for to_mark_node in to_mark_nodes:
+                    if compare_ast(node, to_mark_node):
+                        node.commit_relevant = True
+                        break
+                super().generic_visit(node)
+
+        visitor = MarkerVisitor()
+        visitor.visit(self.tree)
 
     def execute(self):
         self.retrieve_marked_nodes()

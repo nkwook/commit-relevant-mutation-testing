@@ -2,6 +2,7 @@ import ast
 from copy import deepcopy
 
 from .common import Separator, Remover
+from utils import relevant, get_vars
 
 class CDVisitor(ast.NodeVisitor):
     def __init__(self):
@@ -20,9 +21,9 @@ class CDVisitor(ast.NodeVisitor):
         # if the node has test attribute
         if hasattr(node, "test"):
             # add dependency between the variables used in the body and the variables used in the test
-            for var in node.test.variables:
-                for body_var in node.body.variables:
-                    self.add_dependency(body_var, var)
+            for var in get_vars(node.test):
+                for body_item in node.body:
+                    self.add_dependency(var, body_item)
 
         ast.NodeVisitor.generic_visit(self, node)
 
