@@ -102,14 +102,7 @@ class Marker():
                     marked_nodes_in_f.append(x)
                     break
     
-        marked_vars = []
-        for marked_node in marked_nodes_in_f:
-            for varname in self.data_deps[node.name]:
-                if relevant(marked_node, varname):
-                    marked_vars.append(varname)
-        marked_vars = list(set(marked_vars))
-
-        visitor = CDVisitor(marked_vars)
+        visitor = CDVisitor(marked_nodes_in_f)
         visitor.visit(node)
 
     def mark_cd(self):
