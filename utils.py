@@ -50,3 +50,8 @@ def get_vars(node):
     visitor = VarVisitor()
     visitor.visit(node)
     return visitor.vars
+
+class Printer(ast.NodeVisitor):
+    def generic_visit(self, node):
+        print(ast.unparse(node) + "\t\tis relevant: " + str(hasattr(node, "commit_relevant")))
+        super().generic_visit(node)
