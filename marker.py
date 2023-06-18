@@ -92,7 +92,7 @@ class Marker():
         visitor = MarkerVisitor()
         visitor.visit(self.tree)
 
-    def mark_cd_function(self, node):
+    '''def mark_cd_function(self, node):
 
         marked_nodes_in_f = []
         for x in node.body:
@@ -130,7 +130,10 @@ class Marker():
                 super().generic_visit(node)
 
         visitor = MarkerVisitor()
-        visitor.visit(self.tree)
+        visitor.visit(self.tree)'''
+
+    def mark_cd()
+        pass
 
     def execute(self):
         self.retrieve_marked_nodes()
