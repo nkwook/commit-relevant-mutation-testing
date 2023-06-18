@@ -4,7 +4,7 @@ import os
 
 from dependency.data_dependency import get_dd
 from dependency.control_dependency import CDVisitor
-from utils import compare_ast, relevant
+from utils import compare_ast, relevant, Printer
 
 class Marker():
     def __init__(self, tree):
@@ -95,17 +95,19 @@ class Marker():
     def mark_cd_function(self, node):
 
         marked_nodes_in_f = []
-        for x in node.body:
+
+        for x in ast.walk(node):
             for y in self.marked_nodes:
                 if compare_ast(x, y):
                     marked_nodes_in_f.append(x)
                     break
     
-        marked_vars = set()
+        marked_vars = []
         for marked_node in marked_nodes_in_f:
             for varname in self.data_deps[node.name]:
                 if relevant(marked_node, varname):
-                    marked_vars.add(varname)
+                    marked_vars.append(varname)
+        marked_vars = list(set(marked_vars))
 
         visitor = CDVisitor(marked_vars)
         visitor.visit(node)
@@ -138,10 +140,20 @@ def main():
     with open(filename, "r") as f:
         tree = ast.parse(f.read())
 
+    class InitMark(ast.NodeVisitor):
+        def generic_visit(self, node):
+            if ast.unparse(node) == "L = 1":
+                node.commit_relevant = True
+            super().generic_visit(node)
+
+    visitor = InitMark()
+    visitor.visit(tree)
+
     marker = Marker(tree)
     marker.execute()
 
-    print(ast.dump(tree))
+    printer = Printer()
+    printer.visit(tree)
 
 if __name__ == "__main__":
     main()
