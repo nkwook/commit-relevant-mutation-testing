@@ -3,14 +3,14 @@ import sys
 import os
 
 from dependency.data_dependency import get_dd
-from dependency.control_dependency import get_cd
+from dependency.control_dependency import CDVisitor
 from utils import compare_ast, relevant
 
 class Marker():
     def __init__(self, tree):
         self.tree = tree
         self.data_deps = get_dd(tree)
-        self.cond_deps = get_cd(tree)
+        #self.cond_deps = get_cd(tree)
         self.marked_nodes = []
 
     def retrieve_marked_nodes(self):
@@ -92,7 +92,7 @@ class Marker():
         visitor = MarkerVisitor()
         visitor.visit(self.tree)
 
-    '''def mark_cd_function(self, node):
+    def mark_cd_function(self, node):
 
         marked_nodes_in_f = []
         for x in node.body:
@@ -107,33 +107,17 @@ class Marker():
                 if relevant(marked_node, varname):
                     marked_vars.add(varname)
 
-        to_mark_nodes = []
-        for marked_var in marked_vars:
-            to_mark_nodes += self.cond_deps[marked_var]
-
-        return to_mark_nodes
+        visitor = CDVisitor(marked_vars)
+        visitor.visit(node)
 
     def mark_cd(self):
         to_mark_nodes = []
 
         for node in ast.iter_child_nodes(self.tree):
             if isinstance(node, ast.FunctionDef):
-                to_mark_nodes += self.mark_cd_function(node)
+                self.mark_cd_function(node)
             #TODO: handle main
 
-        class MarkerVisitor(ast.NodeVisitor):
-            def generic_visit(self, node):
-                for to_mark_node in to_mark_nodes:
-                    if compare_ast(node, to_mark_node):
-                        node.commit_relevant = True
-                        break
-                super().generic_visit(node)
-
-        visitor = MarkerVisitor()
-        visitor.visit(self.tree)'''
-
-    def mark_cd()
-        pass
 
     def execute(self):
         self.retrieve_marked_nodes()
