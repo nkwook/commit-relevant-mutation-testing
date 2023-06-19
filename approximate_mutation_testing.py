@@ -13,12 +13,13 @@ from approximate_relevant_mutants import InitMutatorId, MutantIdMarker
 from diff_processor import generate_diff, mark_ast_on_diff, parse_diff_lineno
 from mutation_testing import Mutation, generate_diffs, generate_mutation_metadata, generate_test_metadata
 
-PARENT_COMMIT_HASH = "f4d0f77"
-CHILD_COMMIT_HASH = "9500577"
+TEST_NUMBER = "10"
+PARENT_COMMIT_HASH = "d5652ad"
+CHILD_COMMIT_HASH = "045ec14"
 # DIFF_FILE = "diff/samples_case7_case7.txt"
-DIFF_FILE = "diff/samples_case7_case7.txt"
-PRE_COMMIT_SOURCE_FILE = "samples/pre_commits/case7/case7.py"
-POST_COMMIT_SOURCE_FILE = "samples/case7/case7.py"
+DIFF_FILE = "diff/samples_case" + TEST_NUMBER + "_case" + TEST_NUMBER + ".txt"
+PRE_COMMIT_SOURCE_FILE = "samples/pre_commits/case" + TEST_NUMBER + "/case" + TEST_NUMBER + ".py"
+POST_COMMIT_SOURCE_FILE = "samples/case" + TEST_NUMBER + "/case" + TEST_NUMBER + ".py"
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Mutation Testing Tool.")
@@ -52,7 +53,6 @@ if __name__ == "__main__":
         mutation_index = {}
         global_mutant_records = defaultdict(dict)
         source = "/".join(f.split("/")[:-1])
-
 
         mutant_records = defaultdict(list)
         generate_diff(PARENT_COMMIT_HASH, CHILD_COMMIT_HASH)
