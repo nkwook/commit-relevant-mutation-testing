@@ -423,7 +423,7 @@ def generate_test_metadata(source: str) -> Any:
     test_index_key_list: List[str] = list()
     test_index: Dict[str, int] = dict()
     test_metadata_dict = dict()
-    source_dir = "".source
+    source_dir = source
     for root, dirs, files in os.walk(source_dir):
         for f in files:
             test_file = os.path.join(root, f)
