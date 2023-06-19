@@ -288,9 +288,6 @@ class Mutation(NodeVisitor):
                 mutated_root_str = unparse(mutated_root)
 
                 mutated_root_lines = mutated_root_str.split("\n")
-                # print(mutated_root_lines)
-                # print(node.lineno)
-                # print(len(self.root_lines), len(mutated_root_lines))
                 # if node.lineno > len(self.root_lines) or node.lineno > len(mutated_root_lines):
                 #     continue
                 if self.root_lines[node.lineno - 1] != mutated_root_lines[node.lineno - 1]:
@@ -304,9 +301,7 @@ class Mutation(NodeVisitor):
                                     "type": mutation_operator,
                                 }
                             )
-                        else:
-                            print(node.lineno)
-
+                        
                     else:
                         self.mutant_records[node.lineno].append(
                             {
@@ -371,7 +366,7 @@ def generate_diffs(
 
     for lineno, mutants in mutant_records.items():
         for mutant in sorted(mutants, key=lambda x: x["mutated_code"]):
-            # print(f"{lineno} {mutated_code}")
+
             mutation_operator = mutant["type"]
             diff_output = None
             mutant_path = None
@@ -426,8 +421,6 @@ def generate_mutation_metadata(
 
 # [test function name]@[pytest file name without .py]
 def generate_test_metadata(source: str) -> Any:
-    print(f"source: {source}")
-
     def gen_key(test_function_name, test_file_name):
         test_file_name = test_file_name.split("/")[-1].split(".")[0]
         return f"{test_function_name}@{test_file_name}"

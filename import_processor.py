@@ -59,6 +59,5 @@ def find_relevant_import(root: ast.Module):
                 path_map[path] = []
             path_map[path].append(node['name'])
         
-    # print('done')
     for file in path_map:
         import_mutate.import_mutate(file, path_map[file])

@@ -56,7 +56,7 @@ if __name__ == "__main__":
         mutant_records = defaultdict(list)
         generate_diff(PARENT_COMMIT_HASH, CHILD_COMMIT_HASH)
         modified_list = parse_diff_lineno(DIFF_FILE)[i]
-        print(modified_list)
+        # print(modified_list)
 
         root = mark_ast_on_diff(f, modified_list)
 

@@ -41,7 +41,6 @@ def parse_diff_lineno(file_name: str) -> Tuple[List[int], List[int]]:
 
         if line.split(":")[1][0] == "-":
             minus_streak += 1
-            print(curr_lineno, minus_streak, plus_count)
             removed_lineno.append(curr_lineno + minus_streak - plus_count + minus_count)
             minus_count += 1
         else:
@@ -91,8 +90,6 @@ class LinenoChecker(NodeVisitor):
             if node.lineno in self.commit_aware_list:
                 # mark the node as commit relevant
                 node.commit_relevant = True
-                # print(node.lineno)
-                # print(node.lineno)
         return super().generic_visit(node)
 
     # def visit(self, node: AST) -> AST:
@@ -102,7 +99,3 @@ class LinenoChecker(NodeVisitor):
 
 if __name__ == "__main__":
     diff = generate_diff("aab2d03", "4c5af64")
-    # added_list, removed_list= save_diff_lineno()
-    # mark_ast_on_diff(added_list)
-
-    # print(diff)
