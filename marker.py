@@ -9,10 +9,11 @@ from astpretty import pprint
 
 
 class Marker:
-    def __init__(self, tree):
+    def __init__(self, tree, use_cd_to_dd=True):
         self.tree = tree
         self.data_deps = get_dd(tree)
         self.cond_deps = set()
+        self.use_cd_to_dd = use_cd_to_dd
         self.marked_nodes = []
 
     def retrieve_marked_nodes(self):
@@ -49,6 +50,7 @@ class Marker:
                     marked_vars.add(varname)
 
         cond_deps = self.cond_deps
+        use_cd_to_dd = self.use_cd_to_dd
 
         class MarkerVisitor(ast.NodeVisitor):
             def __init__(self):
@@ -66,11 +68,12 @@ class Marker:
                         self.to_mark_nodes.append(node)
                         break
 
-                for cond_var in cond_deps:
-                    if relevant(node, cond_var.id):
-                        node.commit_relevant = True
-                        self.to_mark_nodes.append(node)
-                        break
+                if use_cd_to_dd:
+                    for cond_var in cond_deps:
+                        if relevant(node, cond_var.id):
+                            node.commit_relevant = True
+                            self.to_mark_nodes.append(node)
+                            break
 
         visitor = MarkerVisitor()
         visitor.visit(node)

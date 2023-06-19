@@ -23,9 +23,11 @@ if __name__ == "__main__":
     parser.add_argument("-pre", "--pre_commit", type=str, required=False)
     parser.add_argument("-post", "--post_commit", type=str, required=False)
     parser.add_argument("-diff", "--diff", type=str, required=False)
-    
+    parser.add_argument("-cd_to_dd", "--cd_to_dd", default=True, action=argparse.BooleanOptionalAction)
 
+    
     args = parser.parse_args()
+    print(args)
     # python pmut.py --action execute --source target/bar --kill ./kills
     if args.action == "execute" and not args.kill:
         parser.error("Mutant execution action requires -k/--kill")
@@ -46,6 +48,8 @@ if __name__ == "__main__":
     #         files.append(os.path.join(source, f))
 
     for i, f in enumerate([args.post_commit, args.pre_commit]):
+        print(f"===========Approximate Mutation testing============for {f}")
+    
         num_mutants = 0
         mutation_index = {}
         global_mutant_records = defaultdict(dict)
@@ -54,14 +58,13 @@ if __name__ == "__main__":
         mutant_records = defaultdict(list)
         generate_diff(args.parent, args.child)
         modified_list = parse_diff_lineno(args.diff)[i]
-        # print(modified_list)
 
         root = mark_ast_on_diff(f, modified_list)
 
         nodes_dict = {}
 
         init_mutator_id = InitMutatorId()
-        mutator_marker = MutantIdMarker(nodes_dict)
+        mutator_marker = MutantIdMarker(nodes_dict, args.cd_to_dd)
 
         init_mutator_id.visit(root)
         mutator_marker.visit(root)
@@ -164,6 +167,9 @@ if __name__ == "__main__":
                     num_killed_mutants += 1
             print(f"Total killed mutants: {num_killed_mutants}")
 
-            mutation_score = f"{(num_killed_mutants/len(mutation_index_dict.keys()))*100:05.2f}"
+            if len(mutation_index_dict.keys()) ==0:
+                mutation_score=0
+            else:
+                mutation_score = f"{(num_killed_mutants/len(mutation_index_dict.keys()))*100:05.2f}"
 
             print(f"Mutation score: {mutation_score}% ({num_killed_mutants} / {len(mutation_index_dict.keys())})")

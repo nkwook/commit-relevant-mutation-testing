@@ -64,6 +64,7 @@ CRCR4 = "CRCR4"
 CRCR5 = "CRCR5"
 CRCR6 = "CRCR6"
 
+
 class Mutation(NodeVisitor):
     def __init__(self, root, mutant_records, commit_aware=False, mark_mutant_id=False):
         self.root = root
@@ -296,7 +297,7 @@ class Mutation(NodeVisitor):
                                     "type": mutation_operator,
                                 }
                             )
-                        
+
                     else:
                         self.mutant_records[node.lineno].append(
                             {
@@ -361,7 +362,6 @@ def generate_diffs(
 
     for lineno, mutants in mutant_records.items():
         for mutant in sorted(mutants, key=lambda x: x["mutated_code"]):
-
             mutation_operator = mutant["type"]
             diff_output = None
             mutant_path = None
@@ -445,6 +445,7 @@ def generate_test_metadata(source: str) -> Any:
 
 
 if __name__ == "__main__":
+    print("===========Mutation testing============")
     parser = argparse.ArgumentParser(description="Mutation Testing Tool.")
     parser.add_argument("-a", "--action", choices=["mutate", "execute"], required=True)
     parser.add_argument("-s", "--source", type=str, required=True)
@@ -454,6 +455,7 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--diff", type=str, default="diff")
     parser.add_argument("-parent", "--parent", type=str, required=False)
     parser.add_argument("-child", "--child", type=str, required=False)
+    parser.add_argument("-cd_to_dd", "--cd_to_dd", default=True, action=argparse.BooleanOptionalAction)
 
     args = parser.parse_args()
     print(args)
@@ -462,6 +464,7 @@ if __name__ == "__main__":
 
     if args.action == "execute" and not os.path.exists(args.kill):
         os.mkdir(args.kill)
+
 
     if args.action == "mutate" and not os.path.exists(args.mutants):
         os.mkdir(args.mutants)
@@ -490,7 +493,7 @@ if __name__ == "__main__":
             added_list, removed_list = parse_diff_lineno(diff_file_name)
             # print(diff_file_name, added_list, removed_list)
             marked_root = mark_ast_on_diff(f, added_list)
-            marker = Marker(marked_root)
+            marker = Marker(marked_root, args.cd_to_dd)
             marker.execute()
             marked_root = marker.tree
 
