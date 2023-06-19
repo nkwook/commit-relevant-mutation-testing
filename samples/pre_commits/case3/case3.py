@@ -7,7 +7,6 @@ def sort1(arr):
             if arr[j] == arr[j + 1]: # fix. stable sort가 깨지는 까다로운 버그!
                 print(arr[j], arr[j + 1])
                 arr[j] = arr[j + 1]
-
 def sort2(arr):
     if len(arr) > 1:
         mid = len(arr) // 2
@@ -33,7 +32,6 @@ def sort2(arr):
             arr[k] = right[j]
             j += 1
             k += 1
-
 def get_pivot(arr, low, high):
     i = low - 1
     pivot = arr[high]
@@ -43,7 +41,6 @@ def get_pivot(arr, low, high):
             (arr[i], arr[j]) = (arr[j], arr[i])
     (arr[i + 1], arr[high]) = (arr[high], arr[i + 1])
     return i + 1
-
 def help_sort3(arr, low, high):
     if len(arr) == 1:
         return arr
@@ -51,6 +48,5 @@ def help_sort3(arr, low, high):
         pivot = get_pivot(arr, low, high)
         help_sort3(arr, low, pivot - 1)
         help_sort3(arr, pivot + 1, high)
-
 def sort3(arr):
     return help_sort3(arr, 0, len(arr) - 1)
