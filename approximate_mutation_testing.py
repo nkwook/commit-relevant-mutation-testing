@@ -23,7 +23,7 @@ if __name__ == "__main__":
     parser.add_argument("-pre", "--pre_commit", type=str, required=False)
     parser.add_argument("-post", "--post_commit", type=str, required=False)
     parser.add_argument("-diff", "--diff", type=str, required=False)
-    parser.add_argument("-cd_to_dd", "--cd_to_dd", default=True, action=argparse.BooleanOptionalAction)
+
 
     
     args = parser.parse_args()
@@ -64,7 +64,7 @@ if __name__ == "__main__":
         nodes_dict = {}
 
         init_mutator_id = InitMutatorId()
-        mutator_marker = MutantIdMarker(nodes_dict, args.cd_to_dd)
+        mutator_marker = MutantIdMarker(nodes_dict)
 
         init_mutator_id.visit(root)
         mutator_marker.visit(root)

@@ -29,4 +29,4 @@ def foo4(a):
     return str(34) + ' + ' + str(x)
 
 def foo5(a):#
-    return a * 42x
+    return a * 42
