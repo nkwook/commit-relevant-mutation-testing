@@ -5,18 +5,21 @@ import os
 from dependency.data_dependency import get_dd
 from dependency.control_dependency import CDVisitor
 from utils import compare_ast, relevant, Printer
+from astpretty import pprint
 
-class Marker():
+
+class Marker:
     def __init__(self, tree):
         self.tree = tree
         self.data_deps = get_dd(tree)
-        #self.cond_deps = get_cd(tree)
+        self.cond_deps = set()
         self.marked_nodes = []
 
     def retrieve_marked_nodes(self):
         """
         Retrieve nodes that are marked.
         """
+
         class MarkedVisitor(ast.NodeVisitor):
             def __init__(self):
                 self.marked_nodes = []
@@ -30,26 +33,27 @@ class Marker():
         visitor = MarkedVisitor()
         visitor.visit(self.tree)
         self.marked_nodes = visitor.marked_nodes
-    
-    def mark_dd_function(self, node):
 
+    def mark_dd_function(self, node):
         marked_nodes_in_f = []
         for x in node.body:
             for y in self.marked_nodes:
                 if compare_ast(x, y):
                     marked_nodes_in_f.append(x)
                     break
-    
+
         marked_vars = set()
         for marked_node in marked_nodes_in_f:
             for varname in self.data_deps[node.name]:
                 if relevant(marked_node, varname):
                     marked_vars.add(varname)
 
+        cond_deps = self.cond_deps
+
         class MarkerVisitor(ast.NodeVisitor):
             def __init__(self):
                 self.to_mark_nodes = []
-            
+
             def generic_visit(self, node):
                 super().generic_visit(node)
 
@@ -61,8 +65,13 @@ class Marker():
                         node.commit_relevant = True
                         self.to_mark_nodes.append(node)
                         break
-                
-        
+
+                for cond_var in cond_deps:
+                    if relevant(node, cond_var.id):
+                        node.commit_relevant = True
+                        self.to_mark_nodes.append(node)
+                        break
+
         visitor = MarkerVisitor()
         visitor.visit(node)
 
@@ -74,12 +83,12 @@ class Marker():
         for node in ast.iter_child_nodes(self.tree):
             if isinstance(node, ast.FunctionDef):
                 to_mark_nodes += self.mark_dd_function(node)
-            #TODO: handle main
-            '''else:
+            # TODO: handle main
+            """else:
                 for varname in self.data_deps["main"]:
                     if relevant(node, varname):
                         to_mark_nodes.append(node)
-                        break'''
+                        break"""
 
         class MarkerVisitor(ast.NodeVisitor):
             def generic_visit(self, node):
@@ -93,7 +102,6 @@ class Marker():
         visitor.visit(self.tree)
 
     def mark_cd_function(self, node):
-
         marked_nodes_in_f = []
 
         for x in ast.walk(node):
@@ -101,23 +109,26 @@ class Marker():
                 if compare_ast(x, y):
                     marked_nodes_in_f.append(x)
                     break
-    
-        visitor = CDVisitor(marked_nodes_in_f)
+        result = set()
+        visitor = CDVisitor(marked_nodes_in_f, result)
         visitor.visit(node)
+        return result
 
     def mark_cd(self):
         to_mark_nodes = []
-
+        result = set()
         for node in ast.iter_child_nodes(self.tree):
             if isinstance(node, ast.FunctionDef):
-                self.mark_cd_function(node)
-            #TODO: handle main
-
+                result = result.union(self.mark_cd_function(node))
+            # TODO: handle main
+        self.cond_deps = result
+        # return result
 
     def execute(self):
         self.retrieve_marked_nodes()
-        self.mark_dd()
         self.mark_cd()
+        self.mark_dd()
+
 
 # TODO: Move to tests
 def main():
@@ -147,6 +158,7 @@ def main():
 
     printer = Printer()
     printer.visit(tree)
+
 
 if __name__ == "__main__":
     main()

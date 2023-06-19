@@ -34,7 +34,7 @@ from ast import (
     copy_location,
     parse,
     unparse,
-    walk
+    walk,
 )
 from copy import deepcopy
 from collections import defaultdict
@@ -295,7 +295,6 @@ class Mutation(NodeVisitor):
                 #     continue
                 if self.root_lines[node.lineno - 1] != mutated_root_lines[node.lineno - 1]:
                     if self.mark_mutant_id:
-
                         if node.mutant_id != -1:
                             self.mutant_records[node.lineno].append(
                                 {
@@ -428,6 +427,7 @@ def generate_mutation_metadata(
 # [test function name]@[pytest file name without .py]
 def generate_test_metadata(source: str) -> Any:
     print(f"source: {source}")
+
     def gen_key(test_function_name, test_file_name):
         test_file_name = test_file_name.split("/")[-1].split(".")[0]
         return f"{test_function_name}@{test_file_name}"
@@ -435,13 +435,10 @@ def generate_test_metadata(source: str) -> Any:
     test_index_key_list: List[str] = list()
     test_index: Dict[str, int] = dict()
     test_metadata_dict = dict()
-    print("wtf")
-    source_dir="/".join(source.split("/")[:-1])
+    source_dir = source
     for root, dirs, files in os.walk(source_dir):
-        print(files)
         for f in files:
             test_file = os.path.join(root, f)
-            print(test_file)
             if not ("test" in test_file and test_file.endswith(".py")):
                 continue
             lines = open(test_file, "r").readlines()
@@ -495,7 +492,6 @@ if __name__ == "__main__":
         generate_diff(args.parent, args.child, args.diff)
 
     for f in files:
-        print(f)
         mutant_records = defaultdict(list)
         lines = open(f, "r").readlines()
         root = parse("".join(lines), f)
@@ -517,11 +513,8 @@ if __name__ == "__main__":
             mutation.visit(root)
         target_filename = f.split("/")[-1].split(".")[0]
 
-
-
         if args.action == "mutate":
             num_mutants += sum([len(mutants) for mutants in mutant_records.values()])
-            print(num_mutants)
             diff_dir = args.mutants + "/" + target_filename
             generate_diffs(f, diff_dir, root, mutant_records)
         elif args.action == "execute":
