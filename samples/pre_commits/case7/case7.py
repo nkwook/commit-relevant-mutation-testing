@@ -1,37 +1,15 @@
-def bar1():
-    a = 3
-    b = 4
-    c = a + b
-    return -c
+from typing import List
 
-def bar2():
-    a = 'foo'
-    b = 'bar'
-    return a + b
-
-def bar3(x, y, c):
-    y = -1 * y
-    z = (x + y) * c
-    return z
-
-def bar4(a, b):
-    if a > b:
-        return a + b
-    elif a == b:
-        return False
-    else:
-        return True
-
-def bar5(a):
-    a += 1
-    return bar3(3, 4, a)
-
-def bar6():
-    a = bar1()
-    return a
-
-def bar7(a, b, c):
-    if a > b:
-        return a | c
-    else:
-        return a & c
+def func(x: List[int], y: List[int]) -> int:
+    L, R, vL, vR = 0, 0, 0, 0
+    x, y = sorted(x), sorted(y)
+    R = 2
+    if x[R] > y[R]:
+        vR = 1
+    elif x[R] == y[R]:
+        L = 0
+        if x[L] > y[L]:
+            vL = 1
+    if x[0] > y[2]:
+        return -1
+    return vL + vR

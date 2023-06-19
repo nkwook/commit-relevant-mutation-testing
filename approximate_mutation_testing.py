@@ -16,7 +16,6 @@ from mutation_testing import Mutation, generate_diffs, generate_mutation_metadat
 TEST_NUMBER = "10"
 PARENT_COMMIT_HASH = "d5652ad"
 CHILD_COMMIT_HASH = "045ec14"
-# DIFF_FILE = "diff/samples_case7_case7.txt"
 DIFF_FILE = "diff/samples_case" + TEST_NUMBER + "_case" + TEST_NUMBER + ".txt"
 PRE_COMMIT_SOURCE_FILE = "samples/pre_commits/case" + TEST_NUMBER + "/case" + TEST_NUMBER + ".py"
 POST_COMMIT_SOURCE_FILE = "samples/case" + TEST_NUMBER + "/case" + TEST_NUMBER + ".py"
