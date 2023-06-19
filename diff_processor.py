@@ -4,6 +4,7 @@ from typing import List, Tuple
 from astpretty import pprint
 import subprocess
 from import_processor import find_relevant_import
+from astpretty import pprint
 
 
 # generated diff between two commits using git diff commit_id1 commit_id2 > diff.txt
@@ -30,6 +31,8 @@ def parse_diff_lineno(file_name: str) -> Tuple[List[int], List[int]]:
     removed_lineno = []
     curr_lineno = -1
     minus_streak = 0
+    plus_count = 0
+    minus_count = 0
     for line in diff:
         if len(line.split(":")) <= 1 or "@@" in line:
             continue
@@ -38,11 +41,14 @@ def parse_diff_lineno(file_name: str) -> Tuple[List[int], List[int]]:
 
         if line.split(":")[1][0] == "-":
             minus_streak += 1
-            removed_lineno.append(curr_lineno + minus_streak)
+            print(curr_lineno, minus_streak, plus_count)
+            removed_lineno.append(curr_lineno + minus_streak - plus_count + minus_count)
+            minus_count += 1
         else:
             if minus_streak > 0:
                 minus_streak = 0
             if line.split(":")[1][0] == "+":
+                plus_count += 1
                 added_lineno.append(curr_lineno)
 
     return added_lineno, removed_lineno
@@ -65,8 +71,8 @@ def mark_ast_on_diff(file_name, commit_aware_list: List[int]):
     # for node in walk(root):
     #     if hasattr(node, "commit_relevant"):
     #         if node.commit_relevant:
-    # pprint(node)
-    # print(f'commit relevant: {node.lineno}')
+    #             pprint(node)
+    #             print(f'commit relevant: {node.lineno}')
     return root
 
 
@@ -85,6 +91,7 @@ class LinenoChecker(NodeVisitor):
             if node.lineno in self.commit_aware_list:
                 # mark the node as commit relevant
                 node.commit_relevant = True
+                # print(node.lineno)
                 # print(node.lineno)
         return super().generic_visit(node)
 

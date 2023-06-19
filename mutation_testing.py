@@ -295,14 +295,18 @@ class Mutation(NodeVisitor):
                 #     continue
                 if self.root_lines[node.lineno - 1] != mutated_root_lines[node.lineno - 1]:
                     if self.mark_mutant_id:
-                        self.mutant_records[node.lineno].append(
-                            {
-                                "mutant_id": node.mutant_id,
-                                "mutated_root": mutated_root,
-                                "mutated_code": mutated_root_lines[node.lineno - 1],
-                                "type": mutation_operator,
-                            }
-                        )
+
+                        if node.mutant_id != -1:
+                            self.mutant_records[node.lineno].append(
+                                {
+                                    "mutant_id": node.mutant_id,
+                                    "mutated_root": mutated_root,
+                                    "mutated_code": mutated_root_lines[node.lineno - 1],
+                                    "type": mutation_operator,
+                                }
+                            )
+                        else:
+                            print(node.lineno)
 
                     else:
                         self.mutant_records[node.lineno].append(
@@ -423,6 +427,7 @@ def generate_mutation_metadata(
 
 # [test function name]@[pytest file name without .py]
 def generate_test_metadata(source: str) -> Any:
+    print(f"source: {source}")
     def gen_key(test_function_name, test_file_name):
         test_file_name = test_file_name.split("/")[-1].split(".")[0]
         return f"{test_function_name}@{test_file_name}"
@@ -430,10 +435,13 @@ def generate_test_metadata(source: str) -> Any:
     test_index_key_list: List[str] = list()
     test_index: Dict[str, int] = dict()
     test_metadata_dict = dict()
-
-    for root, dirs, files in os.walk(source):
+    print("wtf")
+    source_dir="/".join(source.split("/")[:-1])
+    for root, dirs, files in os.walk(source_dir):
+        print(files)
         for f in files:
             test_file = os.path.join(root, f)
+            print(test_file)
             if not ("test" in test_file and test_file.endswith(".py")):
                 continue
             lines = open(test_file, "r").readlines()

@@ -19,10 +19,16 @@ class MutantIdMarker(NodeVisitor):
         self.mutator_dict = mutator_dict
 
     def generic_visit(self, node: AST) -> AST:
-        if hasattr(node, "mutant_id"):
+        
+        if hasattr(node, "mutant_id") and node.commit_relevant==False:
+            # print(self.mutant_id)
             node.mutant_id = self.mutant_id
             self.mutator_dict[self.mutant_id] = node
             self.mutant_id += 1
+        else:
+            print(f"got it {node.lineno}")
+        
+
         return super().generic_visit(node)
 
 
@@ -33,13 +39,12 @@ if __name__ == "__main__":
     post_commit_root = mark_ast_on_diff("approximate/post_commit.py", added_list)
     pre_commit_root = mark_ast_on_diff("approximate/pre_commit.py", removed_list)
 
-
     init_mutator_id = InitMutatorId()
-    mutator_marker = MutatorMarker(pre_commit_nodes_dict)
+    mutator_marker = MutantIdMarker(pre_commit_nodes_dict)
     init_mutator_id.visit(pre_commit_root)
     mutator_marker.visit(pre_commit_root)
 
-    mutator_marker = MutatorMarker(post_commit_nodes_dict)
+    mutator_marker = MutantIdMarker(post_commit_nodes_dict)
     init_mutator_id.visit(post_commit_root)
     mutator_marker.visit(post_commit_root)
 
