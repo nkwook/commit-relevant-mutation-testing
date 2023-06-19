@@ -88,7 +88,7 @@ if __name__ == "__main__":
             mutation_metadata_dict, mutation_index_dict = generate_mutation_metadata(global_mutant_records)
 
             test_metadata_dict, test_index_dict = generate_test_metadata(f)
-            print(test_metadata_dict, test_index_dict)
+            # print(test_metadata_dict, test_index_dict)
 
             # exec test codes with mutants
             killed_dict: Dict[str, int] = dict()
