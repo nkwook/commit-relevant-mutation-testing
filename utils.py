@@ -35,3 +35,23 @@ def relevant(node, varname):
     visitor = RelevantVisitor()
     visitor.visit(node)
     return visitor.relevant
+
+def get_vars(node):
+    """
+    Get all variables in a node.
+    """
+    class VarVisitor(ast.NodeVisitor):
+        def __init__(self):
+            self.vars = set()
+
+        def visit_Name(self, node):
+            self.vars.add(node.id)
+
+    visitor = VarVisitor()
+    visitor.visit(node)
+    return visitor.vars
+
+class Printer(ast.NodeVisitor):
+    def generic_visit(self, node):
+        print(ast.unparse(node) + "\t\tis relevant: " + str(hasattr(node, "commit_relevant")))
+        super().generic_visit(node)
