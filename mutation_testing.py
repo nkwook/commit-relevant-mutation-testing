@@ -34,7 +34,6 @@ from ast import (
     copy_location,
     parse,
     unparse,
-    walk,
 )
 from copy import deepcopy
 from collections import defaultdict
@@ -64,10 +63,6 @@ CRCR3 = "CRCR3"
 CRCR4 = "CRCR4"
 CRCR5 = "CRCR5"
 CRCR6 = "CRCR6"
-
-
-# python3 pmut.py --action mutate --source examples/example4 --mutants ./mutation_diffs
-
 
 class Mutation(NodeVisitor):
     def __init__(self, root, mutant_records, commit_aware=False, mark_mutant_id=False):
@@ -428,7 +423,7 @@ def generate_test_metadata(source: str) -> Any:
     test_index_key_list: List[str] = list()
     test_index: Dict[str, int] = dict()
     test_metadata_dict = dict()
-    source_dir = source
+    source_dir = "".source
     for root, dirs, files in os.walk(source_dir):
         for f in files:
             test_file = os.path.join(root, f)
@@ -461,7 +456,7 @@ if __name__ == "__main__":
     parser.add_argument("-child", "--child", type=str, required=False)
 
     args = parser.parse_args()
-    # python pmut.py --action execute --source target/bar --kill ./kills
+    print(args)
     if args.action == "execute" and not args.kill:
         parser.error("Mutant execution action requires -k/--kill")
 

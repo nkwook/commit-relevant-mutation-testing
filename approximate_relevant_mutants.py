@@ -26,7 +26,8 @@ class MutantIdMarker(NodeVisitor):
             self.mutator_dict[self.mutant_id] = node
             self.mutant_id += 1
         else:
-            print(f"got it {node.lineno}")
+            pass
+            # print(f"got it {node.lineno}")
         
 
         return super().generic_visit(node)

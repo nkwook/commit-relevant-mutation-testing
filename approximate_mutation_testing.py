@@ -13,19 +13,17 @@ from approximate_relevant_mutants import InitMutatorId, MutantIdMarker
 from diff_processor import generate_diff, mark_ast_on_diff, parse_diff_lineno
 from mutation_testing import Mutation, generate_diffs, generate_mutation_metadata, generate_test_metadata
 
-TEST_NUMBER = "10"
-PARENT_COMMIT_HASH = "d5652ad"
-CHILD_COMMIT_HASH = "045ec14"
-DIFF_FILE = "diff/samples_case" + TEST_NUMBER + "_case" + TEST_NUMBER + ".txt"
-PRE_COMMIT_SOURCE_FILE = "samples/pre_commits/case" + TEST_NUMBER + "/case" + TEST_NUMBER + ".py"
-POST_COMMIT_SOURCE_FILE = "samples/case" + TEST_NUMBER + "/case" + TEST_NUMBER + ".py"
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Mutation Testing Tool.")
     parser.add_argument("-a", "--action", choices=["mutate", "execute"], required=True)
-    # parser.add_argument("-s", "--source", type=str, required=True)
     parser.add_argument("-m", "--mutants", type=str, required=False)
     parser.add_argument("-k", "--kill", type=str)
+    parser.add_argument("-parent", "--parent", type=str, required=False)
+    parser.add_argument("-child", "--child", type=str, required=False)
+    parser.add_argument("-pre", "--pre_commit", type=str, required=False)
+    parser.add_argument("-post", "--post_commit", type=str, required=False)
+    parser.add_argument("-diff", "--diff", type=str, required=False)
+    
 
     args = parser.parse_args()
     # python pmut.py --action execute --source target/bar --kill ./kills
@@ -47,15 +45,15 @@ if __name__ == "__main__":
     #     if f.endswith(".py"):
     #         files.append(os.path.join(source, f))
 
-    for i, f in enumerate([POST_COMMIT_SOURCE_FILE, PRE_COMMIT_SOURCE_FILE]):
+    for i, f in enumerate([args.post_commit, args.pre_commit]):
         num_mutants = 0
         mutation_index = {}
         global_mutant_records = defaultdict(dict)
         source = "/".join(f.split("/")[:-1])
 
         mutant_records = defaultdict(list)
-        generate_diff(PARENT_COMMIT_HASH, CHILD_COMMIT_HASH)
-        modified_list = parse_diff_lineno(DIFF_FILE)[i]
+        generate_diff(args.parent, args.child)
+        modified_list = parse_diff_lineno(args.diff)[i]
         # print(modified_list)
 
         root = mark_ast_on_diff(f, modified_list)
@@ -87,7 +85,7 @@ if __name__ == "__main__":
 
             mutation_metadata_dict, mutation_index_dict = generate_mutation_metadata(global_mutant_records)
 
-            test_metadata_dict, test_index_dict = generate_test_metadata(f)
+            test_metadata_dict, test_index_dict = generate_test_metadata("/".join(f.split("/")[:-1]))
             # print(test_metadata_dict, test_index_dict)
 
             # exec test codes with mutants
@@ -101,9 +99,7 @@ if __name__ == "__main__":
             kill_matrix = np.zeros((len(test_index_dict.keys()), len(mutation_index_dict.keys())), dtype=int)
             output = []
             for target_file_name, mutation_metadata_list in mutation_metadata_dict.items():
-                print(f"execute target: {target_file_name}")
                 file_path_to_mutate = os.path.abspath(os.path.join(source, target_file_name)) + ".py"
-
                 for mutation_metadata in mutation_metadata_list:
                     original_code = None
                     with open(file_path_to_mutate, "r") as f:
