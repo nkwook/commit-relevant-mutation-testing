@@ -1,0 +1,14 @@
+6a7
+> 
+12d12
+<         # right = arr[mid-1:] #fix. tiny bug
+28c28
+<         while i < len(left):
+---
+>         while i <= len(left):
+31a32
+> 
+40a42
+> 
+47a50
+> 

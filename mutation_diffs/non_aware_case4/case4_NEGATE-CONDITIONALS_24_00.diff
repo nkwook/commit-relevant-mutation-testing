@@ -1,0 +1,16 @@
+4c4
+<     if a==0:
+---
+>     if a == 0:
+12c12
+<     if b ==0:
+---
+>     if b == 0:
+14c14
+<     return a + b 
+---
+>     return a + b
+24c24
+<     elif a == b:
+---
+>     elif a != b:

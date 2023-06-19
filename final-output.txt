@@ -1,0 +1,161 @@
+===========Mutation testing============
+Namespace(action='execute', source='samples/post_commits/case1', mutants=None, commit_aware=True, kill='./kills/case1/cd_to_dd', diff='diff', parent='6c246de', child='e067967', cd_to_dd=True)
+Total test functions found: 10
+Total killed mutants: 46
+Mutation score: 57.50% (46 / 80)
+===========Mutation testing============
+Namespace(action='execute', source='samples/post_commits/case1', mutants=None, commit_aware=True, kill='./kills/case1/no_cd_to_dd', diff='diff', parent='6c246de', child='e067967', cd_to_dd=False)
+Total test functions found: 10
+Total killed mutants: 19
+Mutation score: 54.29% (19 / 35)
+===========Mutation testing============
+Namespace(action='mutate', source='samples/post_commits/case1', mutants='./mutation_diffs/non_aware_case1', commit_aware=False, kill=None, diff='diff', parent=None, child=None, cd_to_dd=True)
+Total number of mutated files: 1
+Total number of mutants generated: 80
+===========Mutation testing============
+Namespace(action='execute', source='samples/post_commits/case2', mutants=None, commit_aware=True, kill='./kills/case2/cd_to_dd', diff='diff', parent='e067967', child='faca8c0', cd_to_dd=True)
+Total test functions found: 7
+Total killed mutants: 4
+Mutation score: 66.67% (4 / 6)
+===========Mutation testing============
+Namespace(action='execute', source='samples/post_commits/case2', mutants=None, commit_aware=True, kill='./kills/case2/no_cd_to_dd', diff='diff', parent='e067967', child='faca8c0', cd_to_dd=False)
+Total test functions found: 7
+Total killed mutants: 4
+Mutation score: 66.67% (4 / 6)
+===========Mutation testing============
+Namespace(action='mutate', source='samples/post_commits/case2', mutants='./mutation_diffs/non_aware_case2', commit_aware=False, kill=None, diff='diff', parent=None, child=None, cd_to_dd=True)
+Total number of mutated files: 1
+Total number of mutants generated: 6
+===========Mutation testing============
+Namespace(action='execute', source='samples/post_commits/case3', mutants=None, commit_aware=True, kill='./kills/case3/cd_to_dd', diff='diff', parent='faca8c0', child='ab60c0b', cd_to_dd=True)
+Total test functions found: 7
+Total killed mutants: 19
+Mutation score: 86.36% (19 / 22)
+===========Mutation testing============
+Namespace(action='execute', source='samples/post_commits/case3', mutants=None, commit_aware=True, kill='./kills/case3/no_cd_to_dd', diff='diff', parent='faca8c0', child='ab60c0b', cd_to_dd=False)
+Total test functions found: 7
+Total killed mutants: 8
+Mutation score: 88.89% (8 / 9)
+===========Mutation testing============
+Namespace(action='mutate', source='samples/post_commits/case3', mutants='./mutation_diffs/non_aware_case3', commit_aware=False, kill=None, diff='diff', parent=None, child=None, cd_to_dd=True)
+Total number of mutated files: 1
+Total number of mutants generated: 30
+===========Mutation testing============
+Namespace(action='execute', source='samples/post_commits/case4', mutants=None, commit_aware=True, kill='./kills/case4/cd_to_dd', diff='diff', parent='ab60c0b', child='fe157cf', cd_to_dd=True)
+Total test functions found: 10
+Total killed mutants: 55
+Mutation score: 85.94% (55 / 64)
+===========Mutation testing============
+Namespace(action='execute', source='samples/post_commits/case4', mutants=None, commit_aware=True, kill='./kills/case4/no_cd_to_dd', diff='diff', parent='ab60c0b', child='fe157cf', cd_to_dd=False)
+Total test functions found: 10
+Total killed mutants: 35
+Mutation score: 81.40% (35 / 43)
+===========Mutation testing============
+Namespace(action='mutate', source='samples/post_commits/case4', mutants='./mutation_diffs/non_aware_case4', commit_aware=False, kill=None, diff='diff', parent=None, child=None, cd_to_dd=True)
+Total number of mutated files: 1
+Total number of mutants generated: 79
+===========Mutation testing============
+Namespace(action='execute', source='samples/post_commits/case5', mutants=None, commit_aware=True, kill='./kills/case5/cd_to_dd', diff='diff', parent='fe157cf', child='f37d61d', cd_to_dd=True)
+Total test functions found: 15
+Total killed mutants: 59
+Mutation score: 62.77% (59 / 94)
+===========Mutation testing============
+Namespace(action='execute', source='samples/post_commits/case5', mutants=None, commit_aware=True, kill='./kills/case5/no_cd_to_dd', diff='diff', parent='fe157cf', child='f37d61d', cd_to_dd=False)
+Total test functions found: 15
+Total killed mutants: 10
+Mutation score: 52.63% (10 / 19)
+===========Mutation testing============
+Namespace(action='mutate', source='samples/post_commits/case5', mutants='./mutation_diffs/non_aware_case5', commit_aware=False, kill=None, diff='diff', parent=None, child=None, cd_to_dd=True)
+Total number of mutated files: 1
+Total number of mutants generated: 95
+===========Mutation testing============
+Namespace(action='execute', source='samples/post_commits/case6', mutants=None, commit_aware=True, kill='./kills/case6/cd_to_dd', diff='diff', parent='f37d61d', child='1b7ec33', cd_to_dd=True)
+Total test functions found: 7
+Total killed mutants: 36
+Mutation score: 52.17% (36 / 69)
+===========Mutation testing============
+Namespace(action='execute', source='samples/post_commits/case6', mutants=None, commit_aware=True, kill='./kills/case6/no_cd_to_dd', diff='diff', parent='f37d61d', child='1b7ec33', cd_to_dd=False)
+Total test functions found: 7
+Total killed mutants: 13
+Mutation score: 34.21% (13 / 38)
+===========Mutation testing============
+Namespace(action='mutate', source='samples/post_commits/case6', mutants='./mutation_diffs/non_aware_case6', commit_aware=False, kill=None, diff='diff', parent=None, child=None, cd_to_dd=True)
+Total number of mutated files: 1
+Total number of mutants generated: 74
+===========Mutation testing============
+Namespace(action='execute', source='samples/post_commits/case7', mutants=None, commit_aware=True, kill='./kills/case7/cd_to_dd', diff='diff', parent='1b7ec33', child='203a49c', cd_to_dd=True)
+Total test functions found: 6
+Total killed mutants: 22
+Mutation score: 68.75% (22 / 32)
+===========Mutation testing============
+Namespace(action='execute', source='samples/post_commits/case7', mutants=None, commit_aware=True, kill='./kills/case7/no_cd_to_dd', diff='diff', parent='1b7ec33', child='203a49c', cd_to_dd=False)
+Total test functions found: 6
+Total killed mutants: 12
+Mutation score: 54.55% (12 / 22)
+===========Mutation testing============
+Namespace(action='mutate', source='samples/post_commits/case7', mutants='./mutation_diffs/non_aware_case7', commit_aware=False, kill=None, diff='diff', parent=None, child=None, cd_to_dd=True)
+Total number of mutated files: 1
+Total number of mutants generated: 36
+Namespace(action='execute', mutants=None, kill='./kills/approximation/case1', parent='6c246de', child='e067967', pre_commit='samples/pre_commits/case1/case1.py', post_commit='samples/post_commits/case1/case1.py', diff='diff/samples_post_commits_case1_case1.txt')
+===========Approximate Mutation testing============for samples/post_commits/case1/case1.py
+Total test functions found: 10
+Total killed mutants: 31
+Mutation score: 62.00% (31 / 50)
+===========Approximate Mutation testing============for samples/pre_commits/case1/case1.py
+Total test functions found: 10
+Total killed mutants: 35
+Mutation score: 70.00% (35 / 50)
+Namespace(action='execute', mutants=None, kill='./kills/approximation/case2', parent='e067967', child='faca8c0', pre_commit='samples/pre_commits/case2/case2.py', post_commit='samples/post_commits/case2/case2.py', diff='diff/samples_post_commits_case2_case2.txt')
+===========Approximate Mutation testing============for samples/post_commits/case2/case2.py
+Total test functions found: 7
+Total killed mutants: 0
+Mutation score: 0% (0 / 0)
+===========Approximate Mutation testing============for samples/pre_commits/case2/case2.py
+Total test functions found: 7
+Total killed mutants: 5
+Mutation score: 100.00% (5 / 5)
+Namespace(action='execute', mutants=None, kill='./kills/approximation/case3', parent='faca8c0', child='ab60c0b', pre_commit='samples/pre_commits/case3/case3.py', post_commit='samples/post_commits/case3/case3.py', diff='diff/samples_post_commits_case3_case3.txt')
+===========Approximate Mutation testing============for samples/post_commits/case3/case3.py
+Total test functions found: 7
+Total killed mutants: 18
+Mutation score: 85.71% (18 / 21)
+===========Approximate Mutation testing============for samples/pre_commits/case3/case3.py
+Total test functions found: 7
+Total killed mutants: 20
+Mutation score: 80.00% (20 / 25)
+Namespace(action='execute', mutants=None, kill='./kills/approximation/case4', parent='ab60c0b', child='fe157cf', pre_commit='samples/pre_commits/case4/case4.py', post_commit='samples/post_commits/case4/case4.py', diff='diff/samples_post_commits_case4_case4.txt')
+===========Approximate Mutation testing============for samples/post_commits/case4/case4.py
+Total test functions found: 10
+Total killed mutants: 56
+Mutation score: 98.25% (56 / 57)
+===========Approximate Mutation testing============for samples/pre_commits/case4/case4.py
+Total test functions found: 10
+Total killed mutants: 56
+Mutation score: 98.25% (56 / 57)
+Namespace(action='execute', mutants=None, kill='./kills/approximation/case5', parent='fe157cf', child='f37d61d', pre_commit='samples/pre_commits/case5/case5.py', post_commit='samples/post_commits/case5/case5.py', diff='diff/samples_post_commits_case5_case5.txt')
+===========Approximate Mutation testing============for samples/post_commits/case5/case5.py
+Total test functions found: 15
+Total killed mutants: 56
+Mutation score: 65.88% (56 / 85)
+===========Approximate Mutation testing============for samples/pre_commits/case5/case5.py
+Total test functions found: 15
+Total killed mutants: 56
+Mutation score: 65.88% (56 / 85)
+Namespace(action='execute', mutants=None, kill='./kills/approximation/case6', parent='f37d61d', child='1b7ec33', pre_commit='samples/pre_commits/case6/case6.py', post_commit='samples/post_commits/case6/case6.py', diff='diff/samples_post_commits_case6_case6.txt')
+===========Approximate Mutation testing============for samples/post_commits/case6/case6.py
+Total test functions found: 7
+Total killed mutants: 31
+Mutation score: 65.96% (31 / 47)
+===========Approximate Mutation testing============for samples/pre_commits/case6/case6.py
+Total test functions found: 7
+Total killed mutants: 31
+Mutation score: 62.00% (31 / 50)
+Namespace(action='execute', mutants=None, kill='./kills/approximation/case7', parent='1b7ec33', child='203a49c', pre_commit='samples/pre_commits/case7/case7.py', post_commit='samples/post_commits/case7/case7.py', diff='diff/samples_post_commits_case7_case7.txt')
+===========Approximate Mutation testing============for samples/post_commits/case7/case7.py
+Total test functions found: 6
+Total killed mutants: 18
+Mutation score: 66.67% (18 / 27)
+===========Approximate Mutation testing============for samples/pre_commits/case7/case7.py
+Total test functions found: 6
+Total killed mutants: 27
+Mutation score: 100.00% (27 / 27)

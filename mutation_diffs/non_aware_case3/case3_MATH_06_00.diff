@@ -1,0 +1,13 @@
+6c6,7
+<                 (arr[j], arr[j + 1]) = (arr[j + 1], arr[j])
+---
+>                 (arr[j], arr[j + 1]) = (arr[j - 1], arr[j])
+> 
+12d12
+<         # right = arr[mid-1:] #fix. tiny bug
+31a32
+> 
+40a42
+> 
+47a50
+> 

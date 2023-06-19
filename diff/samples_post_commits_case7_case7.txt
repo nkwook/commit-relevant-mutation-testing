@@ -1,0 +1,17 @@
+a/samples/post_commits/case7/case7.py b/samples/post_commits/case7/case7.py
+index a66f66c..50d8ba5 100644
+--- a/samples/post_commits/case7/case7.py
++++ b/samples/post_commits/case7/case7.py
+@@ -7,9 +7,9 @@ def func(x: List[int], y: List[int]) -> int:
+7:     if x[R] > y[R]:
+8:         vR = 1
+9:     elif x[R] == y[R]:
+  :-        L = 0
+10:+        L = 1
+11:         if x[L] > y[L]:
+12:             vL = 1
+13:     if x[0] > y[2]:
+14:         return -1
+  :-    return vL + vR
+  :\ No newline at end of file
+15:+    return vL + vR

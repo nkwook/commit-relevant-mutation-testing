@@ -1,0 +1,35 @@
+a/samples/post_commits/case1/case1.py b/samples/post_commits/case1/case1.py
+index 460e22d..5b808be 100644
+--- a/samples/post_commits/case1/case1.py
++++ b/samples/post_commits/case1/case1.py
+@@ -1,18 +1,27 @@
+1: def bar1(a, b, c, d):
+2:+    if(b > 10):
+3:+        return c
+4:     if a < b and c > d:
+5:         return a
+6:+    if(b == 1):
+7:+        return c
+8:     elif a > b and c == d:
+9:         return b
+10:     elif a == b or c == d:
+11:         return c
+12:+    elif a > b and c > d :
+13:+        return a
+14:     else:
+15:         return d
+16: 
+17: def bar2(a, b, c):
+18:     if (a > b) | (b == c):
+19:         return a
+  :-    if (a == c) & (b != c):                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+20:+    if (b == 1):
+21:+        return c
+22:+    if (a == c) & (b != c):
+23:         return b
+24:     if (a < b) & (b < c) | (a == c):
+25:         return c
+  :-    return a + b                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+  :\ No newline at end of file
+26:+    return a + b
+27:+

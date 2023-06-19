@@ -1,0 +1,47 @@
+a/samples/post_commits/case4/case4.py b/samples/post_commits/case4/case4.py
+index ccdc5cd..cd69259 100644
+--- a/samples/post_commits/case4/case4.py
++++ b/samples/post_commits/case4/case4.py
+@@ -1,13 +1,17 @@
+1: def bar1():
+2:     a = 3
+3:     b = 4
+4:+    if a==0:
+5:+        return a
+6:     c = a + b
+7:     return -c
+8: 
+9: def bar2():
+10:     a = 'foo'
+11:     b = 'bar'
+  :-    return a + b
+12:+    if b ==0:
+13:+        return a
+14:+    return a + b 
+15: 
+16: def bar3(x, y, c):
+17:     y = -1 * y
+@@ -20,18 +24,21 @@ def bar4(a, b):
+24:     elif a == b:
+25:         return False
+26:     else:
+27:+        a += 1
+28:         return True
+29: 
+30: def bar5(a):
+31:     a += 1
+32:+    b = a
+33:     return bar3(3, 4, a)
+34: 
+35: def bar6():
+36:     a = bar1()
+37:+    b = a
+38:     return a
+39: 
+40: def bar7(a, b, c):
+41:     if a > b:
+  :-        return a | c
+42:+        return a | c + 1 - 1
+43:     else:
+44:         return a & c
+  :\ No newline at end of file
