@@ -15,3 +15,6 @@ python3 mutation_testing.py --action mutate --source sample --mutants ./mutation
 # execute
 python mutation_testing.py --action execute --source sample --kill ./kills --commit_aware  --parent [PARENT_COMMIT_HASH] --child [CHILD_COMMIT_HASH]
 ```
+
+## PS
+- We added the final presentation slides and the report under the `pdf` repository.
