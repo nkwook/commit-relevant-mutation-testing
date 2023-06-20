@@ -8,7 +8,7 @@ We start with changed parts of the source code and gradually expand to parts tha
 
 ## Experiments
 
-Basically, run `experiment.sh`. Source codes are located in `samples` directory.
+Basically, run `experiment.sh`. Sample codes for test are located in `samples` directory.
 
 ### Mutation Testing without Commit Relevant Option
 ```bash
